@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle || 'Website' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="social-bar">
+
+    <button class="mobile-menu-button" type="button" data-mobile-menu aria-label="Buka menu">☰</button>
+    <nav class="public-nav" data-public-menu>
+      <a href="/about">About</a><a href="/product">Product</a><a href="/form">Form</a><a href="/gallery">Gallery</a>
+      <% if (currentUser) { %><a href="/admin"><%= currentUser %></a><a href="/logout">Logout</a><% } else { %><a href="/login">User Login</a><% } %>
+    </nav>
+  </div>
+</header>
+<main>

@@ -1,0 +1,2 @@
+const express=require('express');const {requireLogin}=require('../../middleware/auth');const c=require('../../controllers/admin/tulisanController');const router=express.Router();
+router.get('/',requireLogin,c.index);router.get('/tambah',requireLogin,c.showCreate);router.post('/',requireLogin,c.create);router.get('/edit/:id',requireLogin,c.showEdit);router.post('/edit/:id',requireLogin,c.update);router.post('/delete/:id',requireLogin,c.remove);router.delete('/delete/:id',requireLogin,c.remove);module.exports=router;

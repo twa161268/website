@@ -1,0 +1,1 @@
+<%- include('partials/header', { pageTitle: String(status || 500), footer: {} }) %><section class="content-page error-page"><h1><%= status || 500 %></h1><p><%= message %></p><a class="button" href="/">Kembali ke Home</a></section><%- include('partials/footer', { footer: {} }) %>

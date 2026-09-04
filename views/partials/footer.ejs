@@ -1,0 +1,49 @@
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-social">
+
+  <% if (footer && footer.sosmed) { %>
+
+    <% footer.sosmed.forEach(item => { %>
+
+      <%
+        let url = item.isi;
+
+        if (item.judul === 'WHATSAPP') {
+          url = /^https?:\/\//i.test(item.isi)
+            ? item.isi
+            : 'https://wa.me/' + item.isi.replace(/\D/g, '');
+        } else if (!/^https?:\/\//i.test(item.isi)) {
+          url = 'https://' + item.isi;
+        }
+      %>
+
+      <a
+        href="<%= url %>"
+        target="_blank"
+        rel="noopener"
+        class="footer-social-item"
+      >
+
+        <img
+          src="<%= item.gambar %>"
+          alt="<%= item.judul %>"
+        >
+
+        <span>
+          <%= item.isi %>
+        </span>
+
+      </a>
+
+    <% }) %>
+
+  <% } %>
+
+</div>
+  </div>
+</footer>
+<script src="/js/main.js"></script>
+</body>
+</html>

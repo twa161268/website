@@ -1,0 +1,23 @@
+.sidebar {
+    width: 220px;
+    min-height: 100vh;
+}
+
+.menu-item {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    margin-bottom: 5px;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.menu-item:hover,
+.menu-item.active {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+}
+
+#formTX .row {
+    margin-bottom: 8px;
+}

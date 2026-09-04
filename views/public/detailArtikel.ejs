@@ -1,0 +1,4 @@
+<%- include('../partials/header', { pageTitle: article.judul, footer }) %>
+<section class="content-page article-detail"><a class="all-link" href="/artikel">← All articles</a><h1><%= article.judul %></h1><time><%= article.created_at ? new Date(article.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'}) : '' %></time><div class="article-images"><% images.forEach(image=>{ %><img src="<%= image.gambar %>" alt="<%= article.judul %>"><% }) %></div><div class="rich-content"><%- article.isi || '' %></div></section><%- include('../partials/footer', { footer }) %>
+
+

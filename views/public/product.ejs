@@ -1,0 +1,4 @@
+<%- include('../partials/header', { pageTitle: 'Product', footer }) %>
+<section class="content-page"><h1>Product</h1><div class="media-grid product-grid">
+<% items.forEach(item => { %><article class="media-card"><% if (/\.pdf$/i.test(item.gambar||'')) { %><div class="pdf-box">PDF</div><% } else if(item.gambar){ %><img src="<%= item.gambar %>" alt="<%= item.judul %>"><% } %><h2><%= item.judul %></h2></article><% }) %>
+</div></section><%- include('../partials/footer', { footer }) %>

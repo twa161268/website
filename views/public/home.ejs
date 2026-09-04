@@ -1,0 +1,65 @@
+<%- include('../partials/header', { pageTitle: title?.isi || 'Website', footer }) %>
+<section class="hero" id="homeHero" data-background="<%= background?.gambar || '' %>">
+  <div class="hero-overlay"></div>
+
+<div class="hero-sosmed">
+
+  <% sosmed.forEach(item => { %>
+
+    <div class="sosmed-item">
+
+      <img
+        src="<%= item.gambar %>"
+        alt="<%= item.judul %>"
+      >
+
+      <span>
+        <%= item.isi %>
+      </span>
+
+    </div>
+
+  <% }) %>
+
+</div>
+
+
+  <div class="hero-content">
+
+    <!-- TITLE + SUBTITLE -->
+    <div class="hero-text">
+      <h1><%= title?.isi || '' %></h1>
+      <p><%= subtitle?.isi || '' %></p>
+    </div>
+
+    <!-- ARTIKEL -->
+    <div class="article-cards home-articles">
+      <% articles.forEach(article => { %>
+        <article class="article-card">
+          <a href="/artikel/<%= article.slug %>">
+
+            <% if (article.thumbnail) { %>
+              <img src="<%= article.thumbnail %>" alt="<%= article.judul %>">
+            <% } else { %>
+              <div class="image-placeholder">No Image</div>
+            <% } %>
+
+            <h2><%= article.judul %></h2>
+          </a>
+
+          <p>
+            <%= String(article.isi || '').replace(/<[^>]*>/g,'').slice(0,120) %>
+            <%= String(article.isi || '').replace(/<[^>]*>/g,'').length > 120 ? '…' : '' %>
+          </p>
+        </article>
+      <% }) %>
+    </div>
+
+    <!-- MORE ARTICLES -->
+    <div class="more-articles">
+      <a href="/artikel">More articles...</a>
+    </div>
+
+  </div>
+</section>
+<%- include('../partials/footer', { footer }) %>

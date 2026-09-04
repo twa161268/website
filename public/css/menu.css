@@ -1,0 +1,202 @@
+/* =========================================================
+   MENU UTAMA
+   ========================================================= */
+
+.masthead-content {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding-top: 70px;
+  padding-bottom: 40px;
+}
+
+/* Judul */
+
+.masthead-title {
+  width: 100%;
+  max-width: 1000px;
+
+  margin-bottom: 30px;
+}
+
+.masthead-title h1 {
+  margin-bottom: 15px;
+}
+
+.masthead-title p {
+  margin-bottom: 0;
+}
+
+/* Area menu */
+
+.menu-wrapper {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+}
+
+/* Susunan icon */
+
+.menu-grid {
+  width: 100%;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  justify-content: center;
+  align-items: flex-start;
+
+  column-gap: 45px;
+  row-gap: 25px;
+
+  padding: 10px 20px;
+}
+
+/* Satu menu */
+
+.menu-item {
+  width: 130px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: flex-start;
+
+  padding: 8px;
+
+  color: #fff;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  border-radius: 12px;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+/* Gambar PNG */
+
+.menu-item img {
+  width: 72px;
+  height: 72px;
+
+  object-fit: contain;
+
+  display: block;
+
+  margin-bottom: 10px;
+
+  filter: brightness(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease;
+}
+
+.menu-item:hover img {
+  filter: brightness(1) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+
+  transform: scale(1.05);
+}
+
+/* Tulisan menu */
+
+.menu-item span {
+  width: 100%;
+
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  line-height: 1.3;
+
+  text-align: center;
+}
+
+/* Hover */
+
+.menu-item:hover {
+  color: #fff;
+
+  background-color: rgba(255, 255, 255, 0.12);
+
+  transform: translateY(-4px);
+}
+
+/* Belum login */
+
+.menu-item.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+  .masthead-content {
+    padding-top: 90px;
+  }
+
+  .menu-grid {
+    column-gap: 25px;
+    row-gap: 20px;
+  }
+
+  .menu-item {
+    width: 115px;
+  }
+
+  .menu-item img {
+    width: 65px;
+    height: 65px;
+  }
+}
+
+/* =========================================================
+   HP
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+  .masthead-content {
+    padding-top: 80px;
+  }
+
+  .masthead-title {
+    margin-bottom: 20px;
+  }
+
+  .menu-grid {
+    column-gap: 10px;
+    row-gap: 15px;
+
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .menu-item {
+    width: 100px;
+  }
+
+  .menu-item img {
+    width: 55px;
+    height: 55px;
+  }
+
+  .menu-item span {
+    font-size: 12px;
+  }
+}

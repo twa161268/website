@@ -1,0 +1,11 @@
+const express=require('express');
+const controller=require('../controllers/publicController');
+const router=express.Router();
+router.get('/',controller.home);
+router.get('/about',controller.about);
+router.get('/product',controller.product);
+router.get('/form',controller.form);
+router.get('/gallery',controller.gallery);
+router.get('/artikel',controller.artikel);
+router.get('/artikel/:slug',controller.detailArtikel);
+module.exports=router;

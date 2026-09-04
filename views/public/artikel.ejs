@@ -1,0 +1,4 @@
+<%- include('../partials/header', { pageTitle: 'Articles', footer }) %>
+<section class="content-page article-list-page"><a class="all-link" href="/">← Home</a><h1>All articles…</h1><div class="article-cards article-list-grid">
+<% articles.forEach(article => { %><article class="article-card"><a href="/artikel/<%= article.slug %>"><% if(article.thumbnail){ %><img src="<%= article.thumbnail %>" alt="<%= article.judul %>"><% } else { %><div class="image-placeholder">No Image</div><% } %><h2><%= article.judul %></h2><time><%= article.created_at ? new Date(article.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'}) : '' %></time></a><p><%= String(article.isi||'').replace(/<[^>]*>/g,'').slice(0,130) %><%= String(article.isi||'').replace(/<[^>]*>/g,'').length>130?'…':'' %></p></article><% }) %>
+</div></section><%- include('../partials/footer', { footer }) %>

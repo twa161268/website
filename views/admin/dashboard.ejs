@@ -1,0 +1,21 @@
+<%- include('partials/header', { pageTitle: 'Dashboard' }) %>
+<%- include('partials/sidebar', { pageTitle: 'Dashboard' }) %>
+
+<div class="stat-grid">
+  <a class="stat-card" href="/admin/artikel">
+    <span>Artikel</span>
+    <strong><%= counts.artikel %></strong>
+  </a>
+
+  <a class="stat-card" href="/admin/gambar">
+    <span>Gambar</span>
+    <strong><%= counts.gambar %></strong>
+  </a>
+
+  <a class="stat-card" href="/admin/tulisan">
+    <span>Tulisan</span>
+    <strong><%= counts.tulisan %></strong>
+  </a>
+</div>
+
+<%- include('partials/footer') %>

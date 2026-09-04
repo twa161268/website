@@ -1,0 +1,6 @@
+<%- include('../partials/header', { pageTitle: 'Gallery', footer }) %>
+<section class="content-page"><h1>Gallery</h1><div class="gallery-grid">
+<% items.forEach(item => { if(!/\.pdf$/i.test(item.gambar||'')){ %><button class="gallery-item" type="button" data-lightbox="<%= item.gambar %>" data-title="<%= item.judul %>"><img src="<%= item.gambar %>" alt="<%= item.judul %>"><span><%= item.judul %></span></button><% } }) %>
+</div></section>
+<div class="lightbox" data-lightbox-modal aria-hidden="true"><button type="button" data-lightbox-close aria-label="Tutup">×</button><img data-lightbox-image alt=""><p data-lightbox-title></p></div>
+<%- include('../partials/footer', { footer }) %>

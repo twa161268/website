@@ -1,0 +1,4 @@
+<%- include('../partials/header', { pageTitle: 'Form', footer }) %>
+<section class="content-page"><h1>Form</h1><div class="media-grid form-grid">
+<% items.forEach(item => { const pdf=/\.pdf$/i.test(item.gambar||''); %><article class="media-card"><% if(pdf){ %><div class="pdf-box">PDF</div><h2><%= item.judul %></h2><a class="button" href="<%= item.gambar %>" target="_blank" rel="noopener">View / Download</a><% } else { %><a href="<%= item.gambar %>" target="_blank" rel="noopener"><img src="<%= item.gambar %>" alt="<%= item.judul %>"></a><h2><%= item.judul %></h2><% } %></article><% }) %>
+</div></section><%- include('../partials/footer', { footer }) %>

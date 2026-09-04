@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/icons/bootstrap-icons.css" />
+  </head>
+  <body class="p-3">
+    <!-- TOMBOL TAMBAH (DI ATAS) -->
+    <button id="btnShowForml" class="btn btn-primary btn-sm mb-3">
+      Tambah Data
+    </button>
+
+    <!-- MAIN FORM (AWALNYA HIDDEN) -->
+    <div id="mainForml" style="display: none">
+      <h5>Main Form</h5>
+
+      <div class="mb-3">
+        <div class="d-flex align-items-center mb-2">
+          <input id="userid" type="hidden" />
+        </div>
+
+        <div class="d-flex align-items-center mb-2">
+          <label style="width: 150px">Username</label>
+          <input id="usernm" class="form-control form-control-sm" />
+        </div>
+
+        <div class="d-flex align-items-center mb-2">
+          <label style="width: 150px">Full Name</label>
+          <input id="namafull" class="form-control form-control-sm" />
+        </div>
+
+        <div class="d-flex align-items-center mb-2">
+          <label style="width: 150px">Password</label>
+          <input id="userpassword" class="form-control form-control-sm" />
+        </div>
+
+        <div class="d-flex align-items-center mb-2">
+          <label style="width: 150px">Stockist ID</label>
+          <input id="stkid" class="form-control form-control-sm" />
+        </div>
+
+        <div class="d-flex align-items-center mb-2">
+          <label style="width: 150px">Role</label>
+          <input id="userrole" class="form-control form-control-sm" />
+        </div>
+
+        <div class="d-flex align-items-center mb-2">
+          <label style="width: 150px">is active</label>
+          <input type="checkbox" id="useractive" />
+          <!--<input id="useractive" class="form-control form-control-sm">-->
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
+          <button id="btnSimpanl" type="button" class="btn btn-success btn-sm">
+            Simpan Data
+          </button>
+          <button id="btnBatall" type="button" class="btn btn-success btn-sm">
+            Batal Simpan
+          </button>
+        </div>
+      </div>
+
+      <hr />
+    </div>
+
+    <!--<h5>Listing</h5>-->
+
+    <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
+      <!-- SEARCH -->
+      <input
+        id="caril"
+        class="form-control form-control-sm"
+        style="width: 250px"
+      />
+      <button id="btnCaril" class="btn btn-info btn-sm">
+        <i class="bi bi-search"></i>
+      </button>
+
+      <!-- DELETE -->
+      <input
+        type="checkbox"
+        id="chkHeaderl"
+        style="transform: scale(1.3); margin-left: 1px"
+      />
+      <button id="btnDeletel" class="btn btn-info btn-sm ms-3">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+
+    <table class="table table-striped" id="tblmlogin">
+      <thead class="table-dark">
+        <tr>
+          <th>USERID</th>
+          <th>USERNAME</th>
+          <th>FULL NAME</th>
+          <th>ROLE</th>
+          <th>IS ACTIVE</th>
+          <th>CREATED AT</th>
+
+          <th class="text-center">✓</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script src="/js/mlogin.js"></script>
+  </body>
+</html>

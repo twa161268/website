@@ -1,0 +1,19 @@
+<aside class="sidebar">
+  <div class="brand">ADMIN PANEL</div>
+  <div class="admin-user">
+    <strong><%= currentUser || '' %></strong
+    ><small><%= currentRole || '' %></small>
+  </div>
+  <nav>
+    <a href="/admin">Dashboard</a><a href="/admin/artikel">Artikel</a
+    ><a href="/admin/gambar">Gambar</a><a href="/admin/tulisan">Tulisan</a
+    ><a href="/">Website Publik</a><a href="/logout">Logout</a>
+  </nav>
+</aside>
+<main class="admin-main">
+  <header class="admin-top">
+    <button class="admin-menu" type="button" data-admin-menu>☰</button>
+    <h1><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Admin Panel' %></h1>
+  </header>
+  <section class="admin-content"></section>
+</main>
