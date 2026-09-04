@@ -82,7 +82,6 @@ a {
   width: 100%;
   text-align: center;
   margin-bottom: 20px;
-  width: 100%;
   transform: translateY(70px);
 }
 
@@ -466,15 +465,31 @@ a {
 .error-page {
   text-align: center;
 }
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
 @media (max-width: 900px) {
+  /* ARTICLE / MEDIA */
   .article-cards,
   .media-grid,
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .article-list-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  /* HERO CONTENT */
+  .hero-content {
+    width: 88%;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  /* HEADER */
   .public-nav {
     display: none;
     position: absolute;
@@ -487,28 +502,169 @@ a {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .public-nav.open {
     display: flex;
   }
+
   .mobile-menu-button {
     display: block;
   }
+
   .social-links {
     gap: 10px;
   }
+
   .social-links a {
     font-size: 12px;
   }
 }
+
+/* =========================================================
+   RESPONSIVE - HP
+   ========================================================= */
+
 @media (max-width: 600px) {
+  /* BODY */
+  html,
+  body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
   .site-header {
     padding: 15px;
   }
+
+  /* HERO */
   .hero {
-    padding-left: 15px;
-    padding-right: 15px;
+    min-height: 100vh;
+    padding: 90px 15px 45px;
+    align-items: flex-start;
   }
-  .article-cards,
+
+  /* CONTENT HERO */
+  .hero-content {
+    width: 100%;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  /* JUDUL + SUBTITLE */
+  .hero-text {
+    width: 100%;
+    margin-bottom: 30px;
+    transform: translateY(30px);
+  }
+
+  .hero-text h1 {
+    font-size: clamp(26px, 8vw, 32px);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .hero-text p {
+    font-size: clamp(15px, 4vw, 17px);
+    line-height: 1.45;
+  }
+
+  /* KARTU ARTIKEL */
+  .article-cards {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    transform: translateY(30px);
+  }
+
+  .article-card {
+    width: 100%;
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .article-card img,
+  .image-placeholder {
+    width: 100%;
+    height: 170px;
+  }
+
+  .article-card h2 {
+    font-size: 17px;
+    line-height: 1.3;
+  }
+
+  .article-card p {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  /* MORE ARTICLES */
+  .more-articles {
+    width: 100%;
+    margin-top: 15px;
+    text-align: center;
+    transform: translateY(30px);
+  }
+
+  /* SOCIAL MEDIA DI HERO */
+  .hero-sosmed {
+    top: 65px;
+    left: 15px;
+    right: 15px;
+
+    gap: 12px;
+
+    justify-content: center;
+
+    overflow-x: auto;
+    white-space: nowrap;
+
+    scrollbar-width: none;
+  }
+
+  .hero-sosmed::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sosmed-item {
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+
+  .sosmed-item img {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* HEADER SOCIAL LINK */
+  .social-links {
+    display: none;
+  }
+
+  /* PUBLIC NAV */
+  .public-nav {
+    right: 15px;
+    top: 60px;
+    max-width: calc(100vw - 30px);
+  }
+
+  /* HALAMAN CONTENT */
+  .content-page {
+    width: calc(100% - 30px);
+    padding: 90px 0 50px;
+  }
+
+  .content-page h1 {
+    font-size: 30px;
+    line-height: 1.2;
+  }
+
+  .rich-content {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  /* GRID HALAMAN LAIN */
   .media-grid,
   .gallery-grid,
   .article-list-grid,
@@ -516,21 +672,27 @@ a {
   .form-row {
     grid-template-columns: 1fr;
   }
-  .article-card img,
-  .image-placeholder {
+
+  /* GAMBAR */
+  .article-list-page .article-card img {
     height: 170px;
   }
-  .content-page {
-    width: min(100% - 30px, 1200px);
-    padding-top: 90px;
+
+  .gallery-item img {
+    height: 200px;
   }
-  .hero h1 {
-    font-size: 34px;
+
+  /* FORM */
+  .form-actions {
+    flex-wrap: wrap;
   }
-  .hero > .hero-content > p {
-    font-size: 19px;
+
+  /* FOOTER */
+  .site-footer {
+    padding: 25px 15px;
   }
-  .social-links {
-    display: none;
+
+  .footer-social {
+    gap: 18px;
   }
 }
