@@ -698,136 +698,158 @@ a {
 }
 
 
+
 /* =========================================================
    RESPONSIVE - HP LANDSCAPE
-   Tujuan:
-   - Tidak mengubah tampilan desktop
-   - HP landscape dibuat mendekati layout desktop
-   - Menyesuaikan keterbatasan tinggi layar HP
+   Layout landscape mengikuti komposisi DESKTOP:
+   - konten tetap di sisi kanan
+   - 3 box artikel
+   - ukuran elemen diperkecil mengikuti tinggi layar
+   - desktop dan HP portrait tidak diubah
    ========================================================= */
 
 @media (max-width: 900px) and (orientation: landscape) {
 
+  html,
+  body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
   /* HERO */
   .hero {
     min-height: 100svh;
-    padding: 70px 20px 25px;
+    height: 100svh;
+    padding: 55px 18px 18px;
     align-items: center;
+    justify-content: center;
   }
 
   /*
-   * Pada landscape HP, ruang vertikal pendek.
-   * Kembalikan posisi elemen agar tidak terdorong terlalu jauh ke bawah.
+   * PENTING:
+   * Komposisi hero dikembalikan seperti desktop.
+   * Konten tetap berada di sisi kanan sehingga tidak menimpa
+   * gambar/background di sisi kiri.
    */
-  .hero-text,
-  .article-cards,
-  .more-articles {
-    transform: translateY(0);
-  }
-
-  /* KONTEN HERO */
   .hero-content {
-    width: min(94%, 1100px);
-    margin-left: 0;
+    width: 58%;
+    margin-left: 35%;
+    margin-right: 0;
     text-align: center;
   }
 
+  /*
+   * Di desktop ada translateY(70px).
+   * Di landscape HP cukup sedikit supaya tidak turun terlalu jauh.
+   */
   .hero-text {
-    margin-bottom: 14px;
+    width: 100%;
+    margin-bottom: 12px;
+    transform: translateY(10px);
   }
 
   .hero-text h1 {
-    font-size: clamp(22px, 4vw, 30px);
-    line-height: 1.2;
-    margin-bottom: 8px;
+    font-size: clamp(18px, 3.4vw, 27px);
+    line-height: 1.15;
+    margin: 0 0 7px;
+    white-space: nowrap;
   }
 
   .hero-text p {
-    font-size: clamp(13px, 2vw, 17px);
-    line-height: 1.35;
+    font-size: clamp(11px, 1.65vw, 15px);
+    line-height: 1.25;
+    white-space: nowrap;
   }
 
-  /*
-   * Landscape kembali menggunakan 3 kolom seperti desktop.
-   * Kolom tetap fleksibel supaya tidak keluar layar.
-   */
+  /* BOX ARTIKEL: tetap 3 kolom seperti desktop */
   .article-cards {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: clamp(7px, 1vw, 12px);
+    transform: translateY(10px);
   }
 
   .article-card {
-    padding: 10px;
-    border-radius: 16px;
+    padding: clamp(6px, 1vw, 10px);
+    border-radius: clamp(12px, 1.8vw, 18px);
   }
 
   .article-card img,
   .image-placeholder {
-    height: clamp(85px, 18vh, 130px);
+    width: 100%;
+    height: clamp(65px, 17vh, 105px);
+    object-fit: cover;
   }
 
   .article-card h2 {
-    font-size: clamp(14px, 2vw, 17px);
-    line-height: 1.25;
-    margin: 8px 0 5px;
+    font-size: clamp(11px, 1.45vw, 16px);
+    line-height: 1.15;
+    margin: clamp(5px, 1vh, 9px) 0 5px;
   }
 
   .article-card p {
-    font-size: clamp(12px, 1.7vw, 15px);
-    line-height: 1.35;
+    font-size: clamp(9px, 1.25vw, 13px);
+    line-height: 1.25;
+    margin: 0;
   }
 
+  /* LINK MORE ARTICLES */
   .more-articles {
-    margin-top: 7px;
+    width: 100%;
+    margin-top: 6px;
     text-align: right;
+    transform: translateY(10px);
   }
 
-  /* SOCIAL MEDIA HERO */
+  .more-articles a {
+    font-size: clamp(10px, 1.3vw, 13px);
+  }
+
+  /* SOCIAL MEDIA DI ATAS HERO */
   .hero-sosmed {
-    top: 12px;
-    left: 20px;
-    right: 20px;
-    gap: 16px;
-    justify-content: center;
+    top: 10px;
+    left: 18px;
+    right: 18px;
+    gap: clamp(10px, 1.5vw, 20px);
+    justify-content: flex-start;
   }
 
   .sosmed-item {
-    font-size: 11px;
+    font-size: clamp(9px, 1.1vw, 12px);
   }
 
   .sosmed-item img {
-    width: 22px;
-    height: 22px;
+    width: clamp(18px, 2.5vw, 25px);
+    height: clamp(18px, 2.5vw, 25px);
   }
 
   /* HEADER */
   .site-header {
-    padding: 10px 20px;
+    padding: 8px 18px;
   }
 
-  /*
-   * Untuk layar landscape yang pendek,
-   * menu tetap berada di area atas tanpa menambah tinggi hero.
-   */
   .public-nav {
-    top: 52px;
+    top: 48px;
   }
 
-  /* HALAMAN CONTENT */
+  .social-links a,
+  .public-nav a {
+    font-size: 12px;
+  }
+
+  /* HALAMAN LAIN */
   .content-page {
     width: min(1200px, calc(100% - 30px));
-    padding: 75px 0 45px;
+    padding: 70px 0 45px;
   }
 
   .content-page h1 {
-    font-size: clamp(28px, 4vw, 42px);
+    font-size: clamp(25px, 3.5vw, 38px);
   }
 
   .rich-content {
-    font-size: clamp(15px, 1.8vw, 17px);
+    font-size: clamp(14px, 1.7vw, 17px);
   }
 
-  /* GRID HALAMAN LAIN */
   .media-grid,
   .gallery-grid,
   .article-list-grid {
@@ -843,15 +865,68 @@ a {
   }
 
   .gallery-item img {
-    height: clamp(140px, 30vh, 210px);
+    height: clamp(110px, 27vh, 190px);
   }
 
   .article-list-page .article-card img {
-    height: clamp(120px, 28vh, 170px);
+    height: clamp(100px, 25vh, 160px);
   }
 
-  /* FOOTER */
   .site-footer {
     padding: 20px;
+  }
+}
+
+/*
+ * Landscape yang sangat pendek, misalnya HP landscape
+ * dengan tinggi sekitar 360-400px.
+ */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 450px) {
+
+  .hero {
+    padding-top: 48px;
+    padding-bottom: 12px;
+  }
+
+  .hero-text {
+    margin-bottom: 7px;
+    transform: translateY(0);
+  }
+
+  .hero-text h1 {
+    font-size: clamp(17px, 3.1vw, 24px);
+    margin-bottom: 4px;
+  }
+
+  .hero-text p {
+    font-size: clamp(10px, 1.5vw, 13px);
+  }
+
+  .article-cards {
+    gap: 7px;
+    transform: translateY(0);
+  }
+
+  .article-card {
+    padding: 6px;
+  }
+
+  .article-card img,
+  .image-placeholder {
+    height: clamp(55px, 14vh, 75px);
+  }
+
+  .article-card h2 {
+    font-size: clamp(10px, 1.3vw, 14px);
+    margin: 4px 0 3px;
+  }
+
+  .article-card p {
+    font-size: clamp(8px, 1.1vw, 11px);
+    line-height: 1.2;
+  }
+
+  .more-articles {
+    margin-top: 4px;
   }
 }
