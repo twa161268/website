@@ -66,6 +66,7 @@ a {
   position: absolute;
   inset: 0;
   background: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
 }
 
 .hero-content {
@@ -152,6 +153,7 @@ a {
   font-weight: 600;
 }
 
+/*
 .hero-sosmed {
   position: absolute;
   top: 22px;
@@ -162,7 +164,21 @@ a {
   align-items: center;
   gap: 22px;
 }
+*/
+.hero-sosmed {
+  position: absolute;
+  top: 22px;
+  left: 25px;
+  z-index: 100;
 
+  display: flex;
+  align-items: center;
+  gap: 22px;
+
+  pointer-events: auto;
+}
+
+/*
 .sosmed-item {
   display: flex;
   align-items: center;
@@ -170,6 +186,24 @@ a {
 
   font-size: 13px;
   font-weight: 600;
+}
+*/
+.sosmed-item {
+  position: relative;
+  z-index: 101;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #111;
+  text-decoration: none;
+  cursor: pointer;
+
+  pointer-events: auto;
 }
 
 .sosmed-item img {
@@ -697,8 +731,6 @@ a {
   }
 }
 
-
-
 /* =========================================================
    RESPONSIVE - HP LANDSCAPE
    Layout landscape mengikuti komposisi DESKTOP:
@@ -709,7 +741,6 @@ a {
    ========================================================= */
 
 @media (max-width: 900px) and (orientation: landscape) {
-
   html,
   body {
     width: 100%;
@@ -882,7 +913,6 @@ a {
  * dengan tinggi sekitar 360-400px.
  */
 @media (max-width: 900px) and (orientation: landscape) and (max-height: 450px) {
-
   .hero {
     padding-top: 48px;
     padding-bottom: 12px;

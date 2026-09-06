@@ -1,1 +1,51 @@
-<%- include('../partials/header',{pageTitle:'Gambar'}) %><%- include('../partials/sidebar') %><div class="page-actions"><a class="button primary" href="/admin/gambar/tambah">+ Tambah Gambar</a></div><div class="table-wrap"><table><thead><tr><th>Preview</th><th>Judul</th><th>Kategori</th><th>Status</th><th>Pin</th><th>Created At</th><th>Action</th></tr></thead><tbody><% items.forEach(item=>{ const pdf=/\.pdf$/i.test(item.gambar||''); %><tr><td><% if(pdf){ %><span class="pdf-icon">PDF</span><% }else if(item.gambar){ %><img class="table-thumb" src="<%= item.gambar %>" alt=""><% } %></td><td><%= item.judul %></td><td><%= item.kategori||'' %></td><td><span class="badge <%= item.status==='1'?'active':'inactive' %>"><%= item.status==='1'?'Aktif':'Nonaktif' %></span></td><td><%= item.statuspin==='1'?'Ya':'Tidak' %></td><td><%= item.created_at ? new Date(item.created_at).toLocaleString('id-ID') : '' %></td><td class="actions"><a href="/admin/gambar/edit/<%= item.id %>">Edit</a><form method="post" action="/admin/gambar/delete/<%= item.id %>" data-confirm="Apakah Anda yakin ingin menghapus gambar ini?"><button class="link-danger" type="submit">Delete</button></form></td></tr><% }) %></tbody></table></div><%- include('../partials/footer') %>
+<%- include('../partials/header',{pageTitle:'Gambar'}) %><%- include('../partials/sidebar') %>
+<style>
+  /* Thumbnail preview daftar Gambar */
+  .gambar-thumb {
+    display: block !important;
+    width: 100px !important;
+    height: 70px !important;
+    max-width: 100px !important;
+    max-height: 70px !important;
+    min-width: 100px !important;
+    min-height: 70px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 8px !important;
+    border: 1px solid #ddd;
+    background: #eee;
+  }
+
+  .gambar-preview-cell {
+    width: 120px;
+    min-width: 120px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .gambar-actions {
+    white-space: nowrap;
+  }
+
+  .gambar-actions form {
+    display: inline;
+  }
+
+  @media (max-width: 700px) {
+    .gambar-thumb {
+      width: 75px !important;
+      height: 55px !important;
+      max-width: 75px !important;
+      max-height: 55px !important;
+      min-width: 75px !important;
+      min-height: 55px !important;
+    }
+
+    .gambar-preview-cell {
+      width: 90px;
+      min-width: 90px;
+    }
+  }
+</style>
+<div class="page-actions"><a class="button primary" href="/admin/gambar/tambah">+ Tambah Gambar</a></div><div class="table-wrap"><table><thead><tr><th>Preview</th><th>Judul</th><th>Kategori</th><th>Status</th><th>Pin</th><th>Created At</th><th>Action</th></tr></thead><tbody><% items.forEach(item=>{ const pdf=/\.pdf$/i.test(item.gambar||''); %><tr><td class="gambar-preview-cell"><% if(pdf){ %><span class="pdf-icon">PDF</span><% }else if(item.gambar){ %><img class="gambar-thumb" src="<%= item.gambar %>" alt="<%= item.judul %>" loading="lazy"><% } %></td><td><%= item.judul %></td><td><%= item.kategori||'' %></td><td><span class="badge <%= item.status==='1'?'active':'inactive' %>"><%= item.status==='1'?'Aktif':'Nonaktif' %></span></td><td><%= item.statuspin==='1'?'Ya':'Tidak' %></td><td><%= item.created_at ? new Date(item.created_at).toLocaleString('id-ID') : '' %></td><td class="actions gambar-actions"><a href="/admin/gambar/edit/<%= item.id %>">Edit</a><form method="post" action="/admin/gambar/delete/<%= item.id %>" data-confirm="Apakah Anda yakin ingin menghapus gambar ini?"><button class="link-danger" type="submit">Delete</button></form></td></tr><% }) %></tbody></table></div><%- include('../partials/footer') %>
+

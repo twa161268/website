@@ -2,7 +2,8 @@
 <section class="hero" id="homeHero" data-background="<%= background?.gambar || '' %>">
   <div class="hero-overlay"></div>
 
-<div class="hero-sosmed">
+<!--
+  <div class="hero-sosmed">
 
   <% sosmed.forEach(item => { %>
 
@@ -22,6 +23,49 @@
   <% }) %>
 
 </div>
+-->
+
+<div class="hero-sosmed">
+
+  <% sosmed.forEach(item => { %>
+
+    <%
+      let url = item.isi;
+
+      if (item.judul === 'WHATSAPP') {
+        url = /^https?:\/\//i.test(item.isi)
+          ? item.isi
+          : 'https://wa.me/' + item.isi.replace(/\D/g, '');
+      } else if (!/^https?:\/\//i.test(item.isi)) {
+        url = 'https://' + item.isi;
+      }
+    %>
+
+    <a
+      href="<%= url %>"
+      target="_blank"
+      rel="noopener"
+      class="sosmed-item"
+    >
+
+      <img
+        src="<%= item.gambar %>"
+        alt="<%= item.judul %>"
+      >
+
+      <span>
+        <%= item.isi %>
+      </span>
+
+    </a>
+
+  <% }) %>
+
+</div>
+
+
+
+
 
 
   <div class="hero-content">
