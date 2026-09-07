@@ -1,3 +1,32 @@
 <%- include('../partials/header', { pageTitle: 'About', footer }) %>
-<section class="content-page narrow-page"><h1>About</h1><div class="rich-content"><%- content?.isi || '' %></div></section>
+
+<section class="content-page narrow-page">
+
+    <h1>About us</h1>
+
+    <% if (sections && sections.length) { %>
+
+        <% sections.forEach(section => { %>
+
+            <% if (section.image) { %>
+                <div class="about-image">
+                    <img
+                        src="<%= section.image.gambar %>"
+                        alt="<%= section.image.judul || 'About' %>"
+                    >
+                </div>
+            <% } %>
+
+            <% if (section.content?.isi) { %>
+                <div class="rich-content">
+                    <%- section.content.isi %>
+                </div>
+            <% } %>
+
+        <% }) %>
+
+    <% } %>
+
+</section>
+
 <%- include('../partials/footer', { footer }) %>

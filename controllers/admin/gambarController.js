@@ -44,7 +44,7 @@ async function uniqueSlug(slug, excludeId = null) {
     c = `${base}-${n++}`.slice(0, 250);
   }
 }
-const categories = ['BACK', 'FORM', 'GALLERY', 'PRODUK', 'SOSMED'];
+const categories = ['BACK', 'FORM', 'GALLERY', 'PRODUK', 'SOSMED', 'ABOUT'];
 async function index(req, res, next) {
   try {
     const items = await db.query(

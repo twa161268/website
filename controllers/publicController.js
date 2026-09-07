@@ -115,11 +115,68 @@ async function home(req, res, next) {
   }
 }
 
+/*
 async function about(req, res, next) {
   try {
     res.render('public/about', {
       content: await getTulisanByJudul('ABOUT'),
       footer: await getFooter(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+*/
+
+async function about(req, res, next) {
+  try {
+    const [texts, images, footer] = await Promise.all([
+      db.query(`
+        SELECT judul, isi
+        FROM tulisan
+        WHERE status = '1'
+          AND judul ~ '^ABOUT[0-9]*$'
+      `),
+
+      db.query(`
+        SELECT judul, gambar
+        FROM gambar
+        WHERE kategori = 'ABOUT'
+          AND status = '1'
+          AND judul ~ '^ABOUT[0-9]*$'
+      `),
+
+      getFooter(),
+    ]);
+
+    // Buat map berdasarkan judul
+    const textMap = Object.fromEntries(texts.map((row) => [row.judul, row]));
+
+    const imageMap = Object.fromEntries(images.map((row) => [row.judul, row]));
+
+    // Gabungkan semua judul dari tulisan + gambar
+    const judulSet = new Set([
+      ...texts.map((row) => row.judul),
+      ...images.map((row) => row.judul),
+    ]);
+
+    // ABOUT = 1, ABOUT2 = 2, ABOUT3 = 3, dst.
+    const sections = [...judulSet]
+      .sort((a, b) => {
+        const nomorA = a === 'ABOUT' ? 1 : parseInt(a.replace('ABOUT', ''), 10);
+        const nomorB = b === 'ABOUT' ? 1 : parseInt(b.replace('ABOUT', ''), 10);
+
+        return nomorA - nomorB;
+      })
+      .map((judul) => ({
+        judul,
+        content: textMap[judul] || null,
+        image: imageMap[judul] || null,
+      }));
+
+    res.render('public/about', {
+      sections,
+      footer,
     });
   } catch (err) {
     next(err);

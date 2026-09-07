@@ -1,4 +1,127 @@
+<!--
 <%- include('../partials/header', { pageTitle: 'Product', footer }) %>
 <section class="content-page"><h1>Product</h1><div class="media-grid product-grid">
 <% items.forEach(item => { %><article class="media-card"><% if (/\.pdf$/i.test(item.gambar||'')) { %><div class="pdf-box">PDF</div><% } else if(item.gambar){ %><img src="<%= item.gambar %>" alt="<%= item.judul %>"><% } %><h2><%= item.judul %></h2></article><% }) %>
 </div></section><%- include('../partials/footer', { footer }) %>
+-->
+
+<%- include('../partials/header', { pageTitle: 'Product', footer }) %>
+
+<section class="content-page">
+  <h1>Product</h1>
+
+  <div class="media-grid product-grid">
+    <% items.forEach(item => { %>
+
+      <article class="media-card">
+
+        <% if (/\.pdf$/i.test(item.gambar || '')) { %>
+
+          <div class="pdf-box">PDF</div>
+
+        <% } else if (item.gambar) { %>
+
+          <img
+            src="<%= item.gambar %>"
+            alt="<%= item.judul %>"
+            class="product-image"
+            data-full-image="<%= item.gambar %>"
+            data-title="<%= item.judul %>"
+          >
+
+        <% } %>
+
+        <h2><%= item.judul %></h2>
+
+      </article>
+
+    <% }) %>
+  </div>
+</section>
+
+
+<!-- LIGHTBOX PRODUCT -->
+<div class="product-lightbox" id="productLightbox">
+
+  <button
+    type="button"
+    class="product-lightbox-close"
+    id="productLightboxClose"
+    aria-label="Close"
+  >
+    &times;
+  </button>
+
+  <img
+    id="productLightboxImage"
+    src=""
+    alt=""
+  >
+
+  <div
+    class="product-lightbox-title"
+    id="productLightboxTitle"
+  ></div>
+
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const lightbox = document.getElementById('productLightbox');
+  const lightboxImage = document.getElementById('productLightboxImage');
+  const lightboxTitle = document.getElementById('productLightboxTitle');
+  const closeButton = document.getElementById('productLightboxClose');
+
+  document.querySelectorAll('.product-image').forEach(function (image) {
+
+    image.addEventListener('click', function () {
+
+      lightboxImage.src = image.dataset.fullImage;
+      lightboxImage.alt = image.dataset.title || '';
+
+      lightboxTitle.textContent = image.dataset.title || '';
+
+      lightbox.classList.add('open');
+
+      document.body.style.overflow = 'hidden';
+    });
+
+  });
+
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+
+    lightboxImage.src = '';
+
+    document.body.style.overflow = '';
+  }
+
+
+  closeButton.addEventListener('click', closeLightbox);
+
+
+  lightbox.addEventListener('click', function (event) {
+
+    if (event.target === lightbox) {
+      closeLightbox();
+    }
+
+  });
+
+
+  document.addEventListener('keydown', function (event) {
+
+    if (event.key === 'Escape') {
+      closeLightbox();
+    }
+
+  });
+
+});
+</script>
+
+
+<%- include('../partials/footer', { footer }) %>
