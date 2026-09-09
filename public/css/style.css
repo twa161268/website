@@ -769,12 +769,24 @@ a {
    ARTICLE LIST
    ========================================================= */
 
+/* =========================================================
+   ARTICLE LIST
+   ========================================================= */
+
 .article-list-grid {
   display: grid;
 
   grid-template-columns: repeat(4, 1fr);
 
   gap: 14px;
+}
+
+.article-list-page .article-cards {
+  position: static;
+  right: auto;
+  bottom: auto;
+  width: 100%;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .article-list-page .article-card img {
