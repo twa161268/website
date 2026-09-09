@@ -1,6 +1,12 @@
+/* =========================================================
+   WEBSITE PUBLIC STYLE
+   Versi bersih untuk layout HOME + BANNER 1-4
+   ========================================================= */
+
 * {
   box-sizing: border-box;
 }
+
 html,
 body {
   margin: 0;
@@ -8,12 +14,19 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   color: #111;
 }
+
 body {
   background: #fff;
 }
+
 a {
   color: #315a82;
 }
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 .site-header {
   position: absolute;
   top: 0;
@@ -22,18 +35,21 @@ a {
   z-index: 20;
   padding: 20px 28px;
 }
+
 .social-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
 }
+
 .social-links,
 .public-nav {
   display: flex;
   align-items: center;
   gap: 24px;
 }
+
 .social-links a,
 .public-nav a {
   color: #111;
@@ -41,9 +57,11 @@ a {
   font-weight: 600;
   font-size: 14px;
 }
+
 .public-nav {
   margin-left: auto;
 }
+
 .mobile-menu-button {
   display: none;
   border: 0;
@@ -51,36 +69,47 @@ a {
   font-size: 25px;
 }
 
+/* =========================================================
+   HOME / HERO
+   ========================================================= */
+
 .hero {
   min-height: 100vh;
   position: relative;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   background: #8bdbe6 center/cover no-repeat;
+
   padding: 110px 30px 55px;
+
   overflow: hidden;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
+
+  z-index: 1;
+
   background: rgba(255, 255, 255, 0.1);
+
   pointer-events: none;
 }
 
 /* =========================================================
-   VIDEO ANIMASI DI HERO
-   Video berada di belakang title + article cards
+   VIDEO ANIMASI
+   Tetap berada paling belakang.
    ========================================================= */
+
 .hero-video-effect {
   position: absolute;
 
-  /* POSISI VIDEO */
   top: 20%;
   left: 35%;
 
-  /* UKURAN VIDEO */
   width: 65%;
   height: 80%;
 
@@ -88,17 +117,10 @@ a {
 
   z-index: 0;
 
-  /* opacity tetap kuat seperti yang kamu suka */
   opacity: 0.6;
 
   pointer-events: none;
 
-  /*
-   * FADE PINGGIR VIDEO
-   * Semua sisi video dibuat perlahan menghilang:
-   * kiri -> kanan
-   * atas -> bawah
-   */
   -webkit-mask-image:
     linear-gradient(
       to right,
@@ -138,9 +160,7 @@ a {
 .hero-video-effect video {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
-
   display: block;
 }
 
@@ -148,67 +168,249 @@ a {
   display: none;
 }
 
-.hero-content {
-  position: relative;
-  z-index: 1;
+/* =========================================================
+   KONTENER HOME
+   Semua elemen home diposisikan relatif terhadap HERO.
+   ========================================================= */
 
-  width: 58%;
-  margin-left: 35%;
+.hero-content {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+
+  z-index: 5;
 
   text-align: center;
 }
 
-.hero-text {
-  width: 100%;
+/* =========================================================
+   TITLE + SUBTITLE
+   home.ejs menggunakan class .hero-title
+   ========================================================= */
+
+.hero-title {
+  position: absolute;
+  left: 5%;
+  top: 12%;
+  width: 400px;
+  z-index: 10;
+  margin: 0;
   text-align: center;
-  margin-bottom: 20px;
-  transform: translateY(70px);
+
+  /* Jenis font */
+  font-family: 'Arial', sans-serif;
+
+  /* Warna seluruh teks */
+  color: #ffffff;
+}
+
+.hero-title h1 {
+  /*font-family: 'Arial', sans-serif;*/
+  font-family: 'Allura', cursive;
+  font-size: clamp(22px, 2.5vw, 24px);
+  font-weight: 700;
+  margin: 0 0 12px;
+  /*text-transform: uppercase;*/
+  line-height: 1.15;
+
+  /* Warna TITLE */
+  color: #ffffff;
+
+  /* Bayangan teks */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.hero-title p {
+  font-family: 'Georgia', serif;
+  font-size: clamp(12px, 1.4vw, 14px);
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.4;
+
+  /* Warna SUBTITLE */
+  color: #ffffff;
+
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+/*
+ * .hero-text tetap disediakan sebagai alias.
+ * Jadi kalau nanti ada halaman lama yang masih memakai
+ * class .hero-text, tidak rusak.
+ */
+.hero-text {
+  position: absolute;
+
+  left: 15%;
+  top: 25%;
+
+  width: 260px;
+
+  z-index: 10;
+
+  margin: 0;
+
+  text-align: center;
 }
 
 .hero-text h1 {
-  font-size: clamp(25px, 4vw, 30px);
-  font-weight: 400;
-  margin: 0 0 12px;
+  font-size: clamp(25px, 3vw, 32px);
+  font-weight: 700;
+  margin: 0 0 15px;
   text-transform: uppercase;
+  line-height: 1.15;
 }
 
 .hero-text p {
   font-size: clamp(14px, 1.6vw, 18px);
   margin: 0;
+  line-height: 1.4;
 }
 
+/* =========================================================
+   HOME BANNERS - PNG TRANSPARAN
+   ========================================================= */
+
+.home-banners {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.home-banner {
+  position: absolute;
+
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+  box-shadow: none;
+
+  overflow: visible;
+}
+
+.home-banner img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+  box-shadow: none;
+
+  object-fit: initial;
+}
+
+/* =========================================================
+   BANNER 1
+   ========================================================= */
+
+.home-banner.banner-1 {
+  top: 10%;
+  right: 3%;
+  width: 62%;
+}
+
+/* =========================================================
+   BANNER 2
+   ========================================================= */
+
+.home-banner.banner-2 {
+  top: 30%;
+  right: 3%;
+  width: 62%;
+}
+
+/* =========================================================
+   BANNER 3
+   ========================================================= */
+
+.home-banner.banner-3 {
+  left: 2%;
+  bottom: 3%;
+  width: 18%;
+}
+
+/* =========================================================
+   BANNER 4
+   ========================================================= */
+
+.home-banner.banner-4 {
+  left: 20%;
+  bottom: 3%;
+  width: 18%;
+}
+
+/* =========================================================
+   ARTICLE CARDS DI HOME
+   ========================================================= */
+
 .article-cards {
+  position: absolute;
+
+  right: 8%;
+  bottom: 7%;
+
+  width: 50%;
+
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  transform: translateY(70px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 10px;
+
+  z-index: 8;
+
+  transform: none;
 }
 
 .article-card {
   background: #c5c5c5;
+
   border-radius: 22px;
+
   padding: 12px;
+
   min-width: 0;
+
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+
+  overflow: hidden;
 }
 
 .article-card img,
 .image-placeholder {
   display: block;
+
   width: 100%;
   height: 110px;
+
   object-fit: cover;
 }
 
 .image-placeholder {
   display: grid;
   place-items: center;
+
   color: #666;
 }
 
 .article-card h2 {
   font-size: 17px;
+
   margin: 12px 0 8px;
+
+  line-height: 1.25;
 }
 
 .article-card a {
@@ -217,82 +419,33 @@ a {
 
 .article-card p {
   font-size: 15px;
+
   line-height: 1.45;
+
   margin: 0;
 }
 
+/* =========================================================
+   MORE ARTICLES
+   ========================================================= */
+
 .more-articles {
-  width: 100%;
+  position: absolute;
+
+  right: 5%;
+  bottom: 3%;
+
+  width: 45%;
+
+  z-index: 8;
+
+  margin: 0;
+
   text-align: right;
-  margin-top: 10px;
-  transform: translateY(70px);
 }
 
 .more-articles a {
   font-weight: 600;
-}
-
-/*
-.hero-sosmed {
-  position: absolute;
-  top: 22px;
-  left: 25px;
-  z-index: 3;
-
-  display: flex;
-  align-items: center;
-  gap: 22px;
-}
-*/
-.hero-sosmed {
-  position: absolute;
-  top: 22px;
-  left: 25px;
-  z-index: 100;
-
-  display: flex;
-  align-items: center;
-  gap: 22px;
-
-  pointer-events: auto;
-}
-
-/*
-.sosmed-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-
-  font-size: 13px;
-  font-weight: 600;
-}
-*/
-.sosmed-item {
-  position: relative;
-  z-index: 101;
-
-  display: flex;
-  align-items: center;
-  gap: 7px;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  color: #111;
-  text-decoration: none;
-  cursor: pointer;
-
-  pointer-events: auto;
-}
-
-.sosmed-item img {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-}
-
-.sosmed-item span {
-  white-space: nowrap;
 }
 
 .more-link {
@@ -301,53 +454,161 @@ a {
   margin-top: 12px;
   font-weight: 600;
 }
+
+/* =========================================================
+   SOCIAL MEDIA DI HERO
+   ========================================================= */
+
+.hero-sosmed {
+  position: absolute;
+
+  top: 22px;
+  left: 25px;
+
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+
+  gap: 22px;
+
+  pointer-events: auto;
+}
+
+.sosmed-item {
+  position: relative;
+
+  z-index: 101;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #111;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+}
+
+.sosmed-item img {
+  width: 28px;
+  height: 28px;
+
+  object-fit: contain;
+}
+
+.sosmed-item span {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   HALAMAN CONTENT
+   ========================================================= */
+
 .content-page {
   width: min(1200px, calc(100% - 40px));
+
   margin: 0 auto;
+
   padding: 110px 0 70px;
+
   min-height: 80vh;
 }
+
 .narrow-page {
   max-width: 900px;
 }
+
 .content-page h1 {
   font-size: 42px;
+
   margin: 0 0 25px;
 }
+
 .rich-content {
   font-size: 17px;
+
   line-height: 1.75;
 }
+
+/* =========================================================
+   MEDIA
+   ========================================================= */
+
 .media-grid {
   display: grid;
+
   grid-template-columns: repeat(4, 1fr);
+
   gap: 20px;
 }
+
 .media-card {
   background: #eee;
+
   border-radius: 25px;
+
   padding: 16px;
 }
+
 .media-card img {
   width: 100%;
   height: 180px;
+
   object-fit: cover;
+
   border-radius: 12px;
 }
+
 .media-card h2 {
   font-size: 18px;
 }
+
+/* =========================================================
+   PDF
+   ========================================================= */
+
 .pdf-box,
 .pdf-icon {
   display: grid;
   place-items: center;
+
   background: #e8e8e8;
+
   color: #a33;
+
   font-weight: 800;
 }
 
+.pdf-box {
+  height: 180px;
+
+  border-radius: 12px;
+
+  font-size: 40px;
+}
+
+.pdf-icon {
+  width: 60px;
+  height: 45px;
+
+  border-radius: 7px;
+}
+
+/* =========================================================
+   PRODUCT
+   ========================================================= */
+
 .product-image {
   cursor: zoom-in;
+
   transition: transform 0.2s ease;
 }
 
@@ -364,6 +625,7 @@ a {
   inset: 0;
 
   display: none;
+
   align-items: center;
   justify-content: center;
 
@@ -383,10 +645,6 @@ a {
 .product-lightbox img {
   display: block;
 
-  /*
-   * Gunakan ukuran asli gambar selama masih muat
-   * di layar.
-   */
   width: auto;
   height: auto;
 
@@ -412,6 +670,7 @@ a {
   color: #fff;
 
   font-size: 45px;
+
   line-height: 1;
 
   cursor: pointer;
@@ -425,187 +684,307 @@ a {
   color: #fff;
 
   font-size: 16px;
+
   text-align: center;
 }
 
-.pdf-box {
-  height: 180px;
-  border-radius: 12px;
-  font-size: 40px;
-}
-.pdf-icon {
-  width: 60px;
-  height: 45px;
-  border-radius: 7px;
-}
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
 .button {
   display: inline-block;
+
   border: 1px solid #555;
+
   border-radius: 8px;
+
   padding: 10px 18px;
+
   background: #fff;
+
   color: #111;
+
   text-decoration: none;
+
   cursor: pointer;
 }
+
 .button.primary {
   background: #222;
+
   color: #fff;
+
   border-color: #222;
 }
+
+/* =========================================================
+   GALLERY
+   ========================================================= */
+
 .gallery-grid {
   display: grid;
+
   grid-template-columns: repeat(4, 1fr);
+
   gap: 18px;
 }
+
 .gallery-item {
   border: 0;
+
   background: #eee;
+
   border-radius: 18px;
+
   padding: 10px;
+
   cursor: pointer;
+
   text-align: left;
 }
+
 .gallery-item img {
   display: block;
+
   width: 100%;
   height: 210px;
+
   object-fit: cover;
+
   border-radius: 12px;
 }
+
 .gallery-item span {
   display: block;
+
   padding: 10px 3px;
+
   font-weight: 600;
 }
+
+/* =========================================================
+   ARTICLE LIST
+   ========================================================= */
+
 .article-list-grid {
+  display: grid;
+
   grid-template-columns: repeat(4, 1fr);
+
+  gap: 14px;
 }
+
 .article-list-page .article-card img {
   height: 150px;
 }
+
 .article-list-page .article-card {
   text-align: center;
 }
+
 .all-link {
   display: inline-block;
+
   margin-bottom: 25px;
 }
+
 .article-detail {
   max-width: 1000px;
 }
+
 .article-detail time {
   display: block;
+
   margin-bottom: 25px;
+
   color: #666;
 }
+
 .article-images {
   display: grid;
+
   grid-template-columns: repeat(2, 1fr);
+
   gap: 18px;
+
   margin: 25px 0;
 }
+
 .article-images img {
   width: 100%;
+
   max-height: 600px;
+
   object-fit: contain;
+
   background: #eee;
+
   border-radius: 12px;
 }
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
 .login-page {
   min-height: 90vh;
+
   display: grid;
+
   place-items: center;
+
   padding: 100px 20px 50px;
+
   background: #f4f4f4;
 }
+
 .login-card {
   width: min(440px, 100%);
+
   background: #fff;
+
   border-radius: 20px;
+
   padding: 30px;
+
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
+
 .login-card h1 {
   text-align: center;
 }
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
 .admin-form label,
 .login-card label {
   display: block;
+
   font-weight: 600;
+
   margin: 15px 0;
 }
+
 .admin-form input,
 .admin-form textarea,
 .admin-form select,
 .login-card input {
   display: block;
+
   width: 100%;
+
   margin-top: 7px;
+
   padding: 11px;
+
   border: 1px solid #bbb;
+
   border-radius: 8px;
+
   font: inherit;
 }
+
 .captcha {
   margin: 8px 0;
+
   border: 1px solid #ddd;
+
   width: max-content;
 }
+
 .form-row {
   display: grid;
+
   grid-template-columns: 1fr 1fr;
+
   gap: 20px;
 }
+
 .form-actions {
   display: flex;
+
   gap: 10px;
+
   margin-top: 25px;
 }
+
+/* =========================================================
+   UPLOAD PREVIEW
+   ========================================================= */
+
 .upload-preview {
   display: flex;
+
   flex-wrap: wrap;
+
   gap: 12px;
+
   margin: 10px 0;
 }
+
 .upload-preview img {
   width: 120px;
   height: 90px;
+
   object-fit: cover;
+
   border-radius: 8px;
 }
+
 .upload-preview .file-preview {
   padding: 20px;
+
   background: #eee;
+
   border-radius: 8px;
 }
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 .site-footer {
   padding: 25px 30px;
+
   border-top: 1px solid #ddd;
+
   background: #fff;
 }
+
 .footer-inner {
   max-width: 1200px;
+
   margin: auto;
 }
+
 .footer-social {
   display: flex;
+
   justify-content: center;
   align-items: center;
+
   gap: 28px;
+
   flex-wrap: wrap;
 }
 
 .footer-social-item {
   display: flex;
+
   align-items: center;
+
   gap: 7px;
+
   text-decoration: none;
 }
 
 .footer-social-item img {
   width: 26px;
   height: 26px;
+
   object-fit: contain;
 }
 
@@ -615,60 +994,91 @@ a {
 
 .footer-social a {
   color: #333;
+
   text-decoration: none;
 }
+
+/* =========================================================
+   GENERAL LIGHTBOX
+   ========================================================= */
+
 .lightbox {
   position: fixed;
   inset: 0;
+
   background: rgba(0, 0, 0, 0.9);
+
   display: none;
+
   align-items: center;
   justify-content: center;
+
   flex-direction: column;
+
   z-index: 100;
+
   padding: 40px;
 }
+
 .lightbox.open {
   display: flex;
 }
+
 .lightbox img {
   max-width: 90vw;
   max-height: 80vh;
+
   object-fit: contain;
 }
+
 .lightbox button {
   position: absolute;
+
   right: 25px;
   top: 15px;
+
   background: none;
+
   color: #fff;
+
   border: 0;
+
   font-size: 45px;
+
   cursor: pointer;
 }
+
 .lightbox p {
   color: #fff;
 }
+
+/* =========================================================
+   ALERT / ERROR
+   ========================================================= */
+
 .alert {
   padding: 12px 15px;
+
   border-radius: 8px;
+
   margin: 15px 0;
 }
+
 .alert.error {
   background: #ffe1e1;
+
   color: #8d0000;
 }
+
 .error-page {
   text-align: center;
 }
 
 /* =========================================================
-   RESPONSIVE - TABLET
+   TABLET
    ========================================================= */
 
 @media (max-width: 900px) {
-  /* ARTICLE / MEDIA */
-  .article-cards,
   .media-grid,
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -678,24 +1088,102 @@ a {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  /* HERO CONTENT */
-  .hero-content {
-    width: 88%;
-    margin-left: 0;
-    text-align: center;
+  /* HERO */
+  .hero {
+    padding: 90px 20px 40px;
+  }
+
+  /* TITLE */
+  .hero-title,
+  .hero-text {
+    left: 7%;
+    top: 25%;
+
+    width: 30%;
+  }
+
+  .hero-title h1,
+  .hero-text h1 {
+    font-size: clamp(20px, 3.5vw, 28px);
+  }
+
+  .hero-title p,
+  .hero-text p {
+    font-size: clamp(12px, 1.8vw, 16px);
+  }
+
+  /* BANNERS */
+  .home-banner.banner-1,
+  .home-banner.banner-2 {
+    width: 58%;
+    right: 3%;
+  }
+
+  .home-banner.banner-3 {
+    left: 2%;
+    width: 16%;
+  }
+
+  .home-banner.banner-4 {
+    left: 19%;
+    width: 16%;
+  }
+  /* ARTICLES */
+  .article-cards {
+    right: 3%;
+
+    width: 43%;
+
+    gap: 10px;
+  }
+
+  .article-card {
+    padding: 9px;
+
+    border-radius: 18px;
+  }
+
+  .article-card img,
+  .image-placeholder {
+    height: 95px;
+  }
+
+  .article-card h2 {
+    font-size: 14px;
+
+    margin: 8px 0 6px;
+  }
+
+  .article-card p {
+    font-size: 12px;
+
+    line-height: 1.35;
+  }
+
+  .more-articles {
+    right: 3%;
+    width: 43%;
   }
 
   /* HEADER */
   .public-nav {
     display: none;
+
     position: absolute;
+
     right: 20px;
     top: 65px;
+
     background: #fff;
+
     padding: 18px;
+
     border-radius: 12px;
+
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+
     flex-direction: column;
+
     align-items: flex-start;
   }
 
@@ -717,111 +1205,143 @@ a {
 }
 
 /* =========================================================
-   RESPONSIVE - HP
+   HP PORTRAIT
    ========================================================= */
 
 @media (max-width: 600px) {
-  /* BODY */
   html,
   body {
     width: 100%;
+
     overflow-x: hidden;
   }
 
-  /* HEADER */
   .site-header {
     padding: 15px;
   }
 
-  /* HERO */
   .hero {
-    min-height: 100vh;
-    padding: 90px 15px 45px;
-    align-items: flex-start;
+    min-height: 100svh;
+    height: 100svh;
+
+    padding: 85px 12px 20px;
   }
 
-  /* VIDEO HERO - HP PORTRAIT */
+  /* VIDEO */
   .hero-video-effect {
     top: 22%;
     left: 15%;
+
     width: 70%;
     height: 45%;
 
     opacity: 0.16;
   }
 
-  .hero-video-fade {
-    top: 18%;
-    left: 10%;
-    width: 80%;
-    height: 55%;
-  }
-
-  /* CONTENT HERO */
-  .hero-content {
-    width: 100%;
-    margin-left: 0;
-    text-align: center;
-  }
-
-  /* JUDUL + SUBTITLE */
+  /* TITLE */
+  .hero-title,
   .hero-text {
-    width: 100%;
-    margin-bottom: 30px;
-    transform: translateY(30px);
+    left: 4%;
+    top: 22%;
+
+    width: 32%;
   }
 
+  .hero-title h1,
   .hero-text h1 {
-    font-size: clamp(26px, 8vw, 32px);
-    line-height: 1.2;
-    margin-bottom: 10px;
+    font-size: clamp(16px, 5vw, 24px);
+
+    line-height: 1.15;
+
+    margin-bottom: 8px;
   }
 
+  .hero-title p,
   .hero-text p {
-    font-size: clamp(15px, 4vw, 17px);
-    line-height: 1.45;
+    font-size: clamp(10px, 3vw, 14px);
+
+    line-height: 1.3;
   }
 
-  /* KARTU ARTIKEL */
+  /* BANNER 1 */
+  .home-banner.banner-1 {
+    top: 18%;
+    right: 2%;
+    width: 62%;
+  }
+
+  /* BANNER 2 */
+  .home-banner.banner-2 {
+    top: 33%;
+    right: 2%;
+    width: 62%;
+  }
+
+  /* BANNER 3 */
+  .home-banner.banner-3 {
+    left: 2%;
+    bottom: 3%;
+    width: 19%;
+  }
+
+  /* BANNER 4 */
+  .home-banner.banner-4 {
+    left: 22%;
+    bottom: 3%;
+    width: 19%;
+  }
+
+  /* ARTICLES */
   .article-cards {
-    grid-template-columns: 1fr;
-    gap: 15px;
-    transform: translateY(30px);
+    right: 2%;
+    bottom: 7%;
+
+    width: 53%;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 4px;
   }
 
   .article-card {
-    width: 100%;
-    padding: 12px;
-    border-radius: 18px;
+    padding: 5px;
+
+    border-radius: 10px;
   }
 
   .article-card img,
   .image-placeholder {
-    width: 100%;
-    height: 170px;
+    height: 55px;
   }
 
   .article-card h2 {
-    font-size: 17px;
-    line-height: 1.3;
+    font-size: 9px;
+
+    line-height: 1.15;
+
+    margin: 5px 0 3px;
   }
 
   .article-card p {
-    font-size: 14px;
-    line-height: 1.45;
+    font-size: 8px;
+
+    line-height: 1.2;
   }
 
-  /* MORE ARTICLES */
+  /* MORE */
   .more-articles {
-    width: 100%;
-    margin-top: 15px;
-    text-align: center;
-    transform: translateY(30px);
+    right: 2%;
+    bottom: 3%;
+
+    width: 53%;
+
+    font-size: 9px;
   }
 
-  /* SOCIAL MEDIA DI HERO */
+  /* SOCIAL MEDIA */
   .hero-sosmed {
     top: 65px;
+
     left: 15px;
     right: 15px;
 
@@ -830,6 +1350,7 @@ a {
     justify-content: center;
 
     overflow-x: auto;
+
     white-space: nowrap;
 
     scrollbar-width: none;
@@ -841,6 +1362,7 @@ a {
 
   .sosmed-item {
     flex-shrink: 0;
+
     font-size: 11px;
   }
 
@@ -849,35 +1371,37 @@ a {
     height: 24px;
   }
 
-  /* HEADER SOCIAL LINK */
   .social-links {
     display: none;
   }
 
-  /* PUBLIC NAV */
   .public-nav {
     right: 15px;
     top: 60px;
+
     max-width: calc(100vw - 30px);
   }
 
-  /* HALAMAN CONTENT */
+  /* CONTENT */
   .content-page {
     width: calc(100% - 30px);
+
     padding: 90px 0 50px;
   }
 
   .content-page h1 {
     font-size: 30px;
+
     line-height: 1.2;
   }
 
   .rich-content {
     font-size: 16px;
+
     line-height: 1.65;
   }
 
-  /* GRID HALAMAN LAIN */
+  /* OTHER GRIDS */
   .media-grid,
   .gallery-grid,
   .article-list-grid,
@@ -886,7 +1410,6 @@ a {
     grid-template-columns: 1fr;
   }
 
-  /* GAMBAR */
   .article-list-page .article-card img {
     height: 170px;
   }
@@ -895,12 +1418,10 @@ a {
     height: 200px;
   }
 
-  /* FORM */
   .form-actions {
     flex-wrap: wrap;
   }
 
-  /* FOOTER */
   .site-footer {
     padding: 25px 15px;
   }
@@ -911,130 +1432,143 @@ a {
 }
 
 /* =========================================================
-   RESPONSIVE - HP LANDSCAPE
-   Layout landscape mengikuti komposisi DESKTOP:
-   - konten tetap di sisi kanan
-   - 3 box artikel
-   - ukuran elemen diperkecil mengikuti tinggi layar
-   - desktop dan HP portrait tidak diubah
+   HP LANDSCAPE
    ========================================================= */
 
 @media (max-width: 900px) and (orientation: landscape) {
   html,
   body {
     width: 100%;
+
     overflow-x: hidden;
   }
 
-  /* HERO */
   .hero {
     min-height: 100svh;
     height: 100svh;
+
     padding: 55px 18px 18px;
-    align-items: center;
-    justify-content: center;
   }
 
+  /* VIDEO */
   .hero-video-effect {
     top: 12%;
     left: 53%;
+
     width: 43%;
     height: 72%;
+
     opacity: 0.2;
   }
 
-  .hero-video-fade {
-    top: 10%;
-    left: 48%;
-    width: 50%;
-    height: 78%;
-  }
-
-  /*
-   * PENTING:
-   * Komposisi hero dikembalikan seperti desktop.
-   * Konten tetap berada di sisi kanan sehingga tidak menimpa
-   * gambar/background di sisi kiri.
-   */
-  .hero-content {
-    width: 58%;
-    margin-left: 35%;
-    margin-right: 0;
-    text-align: center;
-  }
-
-  /*
-   * Di desktop ada translateY(70px).
-   * Di landscape HP cukup sedikit supaya tidak turun terlalu jauh.
-   */
+  /* TITLE */
+  .hero-title,
   .hero-text {
-    width: 100%;
-    margin-bottom: 12px;
-    transform: translateY(10px);
+    left: 7%;
+    top: 24%;
+
+    width: 29%;
   }
 
+  .hero-title h1,
   .hero-text h1 {
-    font-size: clamp(18px, 3.4vw, 27px);
+    font-size: clamp(17px, 3vw, 25px);
+
     line-height: 1.15;
-    margin: 0 0 7px;
-    white-space: nowrap;
+
+    margin-bottom: 6px;
   }
 
+  .hero-title p,
   .hero-text p {
-    font-size: clamp(11px, 1.65vw, 15px);
+    font-size: clamp(10px, 1.5vw, 14px);
+
     line-height: 1.25;
-    white-space: nowrap;
   }
 
-  /* BOX ARTIKEL: tetap 3 kolom seperti desktop */
+  /* BANNER1 */
+  .home-banner.banner-1 {
+    top: 16%;
+    right: 3%;
+    width: 60%;
+  }
+
+  /* BANNER2 */
+  .home-banner.banner-2 {
+    top: 35%;
+    right: 3%;
+    width: 60%;
+  }
+
+  /* BANNER3 */
+  .home-banner.banner-3 {
+    left: 2%;
+    bottom: 4%;
+    width: 17%;
+  }
+
+  /* BANNER4 */
+  .home-banner.banner-4 {
+    left: 20%;
+    bottom: 4%;
+    width: 17%;
+  }
+
+  /* ARTICLES */
   .article-cards {
+    right: 3%;
+    bottom: 7%;
+
+    width: 44%;
+
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(7px, 1vw, 12px);
-    transform: translateY(10px);
+
+    gap: clamp(6px, 1vw, 10px);
   }
 
   .article-card {
-    padding: clamp(6px, 1vw, 10px);
-    border-radius: clamp(12px, 1.8vw, 18px);
+    padding: clamp(5px, 0.8vw, 9px);
+
+    border-radius: clamp(10px, 1.5vw, 16px);
   }
 
   .article-card img,
   .image-placeholder {
-    width: 100%;
-    height: clamp(65px, 17vh, 105px);
-    object-fit: cover;
+    height: clamp(55px, 16vh, 95px);
   }
 
   .article-card h2 {
-    font-size: clamp(11px, 1.45vw, 16px);
+    font-size: clamp(10px, 1.35vw, 15px);
+
     line-height: 1.15;
-    margin: clamp(5px, 1vh, 9px) 0 5px;
+
+    margin: 5px 0 4px;
   }
 
   .article-card p {
-    font-size: clamp(9px, 1.25vw, 13px);
-    line-height: 1.25;
-    margin: 0;
+    font-size: clamp(8px, 1.1vw, 12px);
+
+    line-height: 1.2;
   }
 
-  /* LINK MORE ARTICLES */
   .more-articles {
-    width: 100%;
-    margin-top: 6px;
-    text-align: right;
-    transform: translateY(10px);
+    right: 3%;
+    bottom: 3%;
+
+    width: 44%;
+
+    font-size: clamp(9px, 1.2vw, 12px);
   }
 
-  .more-articles a {
-    font-size: clamp(10px, 1.3vw, 13px);
-  }
-
-  /* SOCIAL MEDIA DI ATAS HERO */
+  /* SOCIAL */
   .hero-sosmed {
     top: 10px;
+
     left: 18px;
     right: 18px;
+
     gap: clamp(10px, 1.5vw, 20px);
+
     justify-content: flex-start;
   }
 
@@ -1061,9 +1595,10 @@ a {
     font-size: 12px;
   }
 
-  /* HALAMAN LAIN */
+  /* OTHER PAGES */
   .content-page {
     width: min(1200px, calc(100% - 30px));
+
     padding: 70px 0 45px;
   }
 
@@ -1102,10 +1637,10 @@ a {
   }
 }
 
-/*
- * Landscape yang sangat pendek, misalnya HP landscape
- * dengan tinggi sekitar 360-400px.
- */
+/* =========================================================
+   LANDSCAPE PENDEK
+   ========================================================= */
+
 @media (max-width: 900px) and (orientation: landscape) and (max-height: 450px) {
   .hero {
     padding-top: 48px;
@@ -1115,57 +1650,78 @@ a {
   .hero-video-effect {
     top: 12%;
     left: 53%;
+
     width: 43%;
     height: 72%;
+
     opacity: 0.14;
   }
 
-  .hero-video-fade {
-    top: 10%;
-    left: 48%;
-    width: 50%;
-    height: 78%;
-  }
-
+  .hero-title,
   .hero-text {
-    margin-bottom: 7px;
-    transform: translateY(0);
+    top: 22%;
   }
 
+  .hero-title h1,
   .hero-text h1 {
-    font-size: clamp(17px, 3.1vw, 24px);
+    font-size: clamp(15px, 2.8vw, 21px);
+
     margin-bottom: 4px;
   }
 
+  .hero-title p,
   .hero-text p {
-    font-size: clamp(10px, 1.5vw, 13px);
+    font-size: clamp(9px, 1.3vw, 12px);
+  }
+
+  .home-banner.banner-1 {
+    top: 14%;
+    width: 60%;
+  }
+
+  .home-banner.banner-2 {
+    top: 32%;
+    width: 60%;
+  }
+
+  .home-banner.banner-3 {
+    bottom: 3%;
+    width: 17%;
+  }
+
+  .home-banner.banner-4 {
+    bottom: 3%;
+    width: 17%;
   }
 
   .article-cards {
-    gap: 7px;
-    transform: translateY(0);
+    bottom: 6%;
+
+    gap: 5px;
   }
 
   .article-card {
-    padding: 6px;
+    padding: 5px;
   }
 
   .article-card img,
   .image-placeholder {
-    height: clamp(55px, 14vh, 75px);
+    height: clamp(45px, 13vh, 65px);
   }
 
   .article-card h2 {
-    font-size: clamp(10px, 1.3vw, 14px);
-    margin: 4px 0 3px;
+    font-size: clamp(9px, 1.2vw, 12px);
+
+    margin: 3px 0;
   }
 
   .article-card p {
-    font-size: clamp(8px, 1.1vw, 11px);
-    line-height: 1.2;
+    font-size: clamp(7px, 1vw, 10px);
+
+    line-height: 1.15;
   }
 
   .more-articles {
-    margin-top: 4px;
+    bottom: 2%;
   }
 }

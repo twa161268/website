@@ -68,7 +68,7 @@ async function getFooter() {
 
 async function home(req, res, next) {
   try {
-    const [backgrounds, title, subtitle, articles, sosmed, footer] =
+    const [backgrounds, banners, title, subtitle, articles, sosmed, footer] =
       await Promise.all([
         db.query(`
         SELECT *
@@ -76,6 +76,22 @@ async function home(req, res, next) {
         WHERE kategori = 'BACK'
           AND status = '1'
         ORDER BY statuspin DESC, created_at DESC
+      `),
+
+        db.query(`
+      SELECT *
+      FROM gambar
+      WHERE kategori = 'BANNER'
+      AND status = '1'
+      AND judul IN ('BANNER1', 'BANNER2', 'BANNER3', 'BANNER4')
+      ORDER BY
+      CASE judul
+        WHEN 'BANNER1' THEN 1
+        WHEN 'BANNER2' THEN 2
+        WHEN 'BANNER3' THEN 3
+        WHEN 'BANNER4' THEN 4
+        ELSE 99
+      END
       `),
 
         getTulisanByJudul('TITLE'),
@@ -104,10 +120,11 @@ async function home(req, res, next) {
 
     res.render('public/home', {
       background: backgrounds[0] || null,
+      banners: banners || [],
       title,
       subtitle,
-      articles,
-      sosmed,
+      articles: articles || [],
+      sosmed: sosmed || [],
       footer,
     });
   } catch (err) {

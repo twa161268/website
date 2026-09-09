@@ -81,11 +81,39 @@
 
   <div class="hero-content">
 
-    <!-- TITLE + SUBTITLE -->
+    <!--
     <div class="hero-text">
       <h1><%= title?.isi || '' %></h1>
       <p><%= subtitle?.isi || '' %></p>
     </div>
+    -->
+
+     <!-- TITLE + SUBTITLE
+    <div class="hero-title">
+    <h1><%= title?.isi || '' %></h1>
+    <p><%= subtitle?.isi || '' %></p>
+    </div>
+  -->
+
+
+<% if (Array.isArray(banners) && banners.length > 0) { %>
+
+  <div class="home-banners">
+
+    <% banners.forEach(banner => { %>
+
+      <div class="home-banner banner-<%= banner.judul.replace('BANNER', '') %>">
+        <img
+          src="<%= banner.gambar %>"
+          alt="<%= banner.judul %>"
+        >
+      </div>
+
+    <% }) %>
+
+  </div>
+
+<% } %>
 
     <!-- ARTIKEL -->
     <div class="article-cards home-articles">
