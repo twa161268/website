@@ -1,3 +1,820 @@
-<%- include('../partials/header',{pageTitle:'Edit Artikel'}) %><%- include('../partials/sidebar') %>
-<% if(error){ %><div class="alert error"><%= error %></div><% } %><form class="admin-form" method="post" action="/admin/artikel/edit/<%= article.id %>" enctype="multipart/form-data"><label>Judul<input name="judul" value="<%= article.judul %>" required></label><label>Slug<input name="slug" value="<%= article.slug||'' %>"></label><label>Isi<textarea name="isi" rows="12"><%= article.isi||'' %></textarea></label><div class="form-row"><label>Status<select name="status"><option value="1" <%= article.status!=='0'?'selected':'' %>>Aktif</option><option value="0" <%= article.status==='0'?'selected':'' %>>Nonaktif</option></select></label><label>Status Pin<select name="statuspin"><option value="0" <%= article.statuspin!=='1'?'selected':'' %>>Tidak</option><option value="1" <%= article.statuspin==='1'?'selected':'' %>>Ya</option></select></label></div><h2>Gambar Artikel</h2><div class="image-order-list" data-sortable-images><% images.forEach((image,i)=>{ %><div class="admin-image-row"><img src="<%= image.gambar %>" alt=""><div class="image-meta"><strong>Gambar <%= i+1 %></strong><input type="hidden" name="image_ids" value="<%= image.id %>"><label>Urutan<input type="number" name="image_orders" min="1" value="<%= image.urutan || i+1 %>"></label></div><button class="button danger" type="button" data-delete-url="/admin/artikel/gambar/delete/<%= image.id %>" data-confirm="Apakah Anda yakin ingin menghapus gambar artikel ini?">Hapus</button></div><% }) %></div><label>Tambah Gambar Baru<input type="file" name="gambar_baru" accept="image/jpeg,image/png,image/jpg,application/pdf" multiple data-preview-target="#new-article-preview"></label><div id="new-article-preview" class="upload-preview"></div><div class="form-actions"><button class="button primary" type="submit">Simpan Perubahan</button><a class="button" href="/admin/artikel">Kembali</a></div></form>
-<%- include('../partials/footer') %>
+<%- include('../partials/header',{pageTitle:'Edit Artikel'}) %>
+  <%- include('../partials/sidebar') %>
+
+    <style>
+      .editor-card {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+      }
+
+      .editor-card h2 {
+        margin-bottom: 25px;
+      }
+
+      .editor-card label {
+        display: block;
+        margin-bottom: 15px;
+        font-weight: 600;
+      }
+
+      .editor-card input[type="text"],
+      .editor-card textarea,
+      .editor-card select {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 6px;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font: inherit;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 25px 0 15px;
+      }
+
+      .editor-toolbar button {
+        border: 1px solid #ccc;
+        background: #f7f7f7;
+        padding: 9px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .editor-toolbar button:hover {
+        background: #eee;
+      }
+
+      #contentBlocks {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .content-block {
+        border: 1px solid #d5d5d5;
+        border-radius: 8px;
+        padding: 15px;
+        background: #fafafa;
+      }
+
+      .content-block-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .content-type {
+        font-weight: 700;
+      }
+
+      .content-actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .content-actions button {
+        border: 1px solid #ccc;
+        background: #fff;
+        padding: 5px 9px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .content-actions button:hover {
+        background: #eee;
+      }
+
+      .content-actions .delete {
+        color: #b00020;
+      }
+
+      .content-text-input {
+        min-height: 130px;
+        resize: vertical;
+      }
+
+      .media-preview {
+        margin-top: 12px;
+        text-align: center;
+      }
+
+      .media-preview img {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 8px;
+      }
+
+      .media-preview video {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 8px;
+      }
+
+      .current-media {
+        margin-bottom: 12px;
+      }
+
+      .current-media small {
+        display: block;
+        margin-bottom: 8px;
+        color: #666;
+      }
+
+      .current-media img,
+      .current-media video {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 8px;
+      }
+
+      .empty-blocks {
+        padding: 25px;
+        text-align: center;
+        color: #777;
+        border: 1px dashed #ccc;
+        border-radius: 8px;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+      }
+
+      .alert.error {
+        max-width: 1000px;
+        margin: 20px auto;
+      }
+
+      @media (max-width: 700px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .editor-card {
+          margin: 10px;
+          padding: 20px;
+        }
+      }
+    </style>
+
+
+    <% if (error) { %>
+      <div class="alert error">
+        <%= error %>
+      </div>
+      <% } %>
+
+
+        <div class="editor-card">
+
+          <h2>Edit Artikel</h2>
+
+
+          <form id="articleForm" method="post" action="/admin/artikel/edit/<%= article.id %>"
+            enctype="multipart/form-data">
+
+            <!-- =====================================
+         INFORMASI ARTIKEL
+         ===================================== -->
+
+            <label>
+              Judul
+              <input type="text" name="judul" value="<%= article.judul || '' %>" required>
+            </label>
+
+
+            <label>
+              Slug
+              <input type="text" name="slug" value="<%= article.slug || '' %>">
+            </label>
+
+
+            <div class="form-row">
+
+              <label>
+                Status
+
+                <select name="status">
+
+                  <option value="1" <%=article.status !=='0' ? 'selected' : '' %>
+                    >
+                    Aktif
+                  </option>
+
+                  <option value="0" <%=article.status==='0' ? 'selected' : '' %>
+                    >
+                    Nonaktif
+                  </option>
+
+                </select>
+              </label>
+
+
+              <label>
+                Status Pin
+
+                <select name="statuspin">
+
+                  <option value="0" <%=article.statuspin !=='1' ? 'selected' : '' %>
+                    >
+                    Tidak
+                  </option>
+
+                  <option value="1" <%=article.statuspin==='1' ? 'selected' : '' %>
+                    >
+                    Ya
+                  </option>
+
+                </select>
+              </label>
+
+            </div>
+
+
+            <!-- =====================================
+         TOOLBAR BLOCK
+         ===================================== -->
+
+            <h3>Isi Artikel</h3>
+
+            <div class="editor-toolbar">
+
+              <button type="button" id="btnAddText">
+                + Teks
+              </button>
+
+              <button type="button" id="btnAddImage">
+                + Gambar
+              </button>
+
+              <button type="button" id="btnAddVideo">
+                + Video
+              </button>
+
+            </div>
+
+
+            <!-- =====================================
+         CONTENT BLOCKS
+         ===================================== -->
+
+            <div id="contentBlocks">
+
+              <% if (contents && contents.length> 0) { %>
+
+                <% contents.forEach((content, index)=> { %>
+
+                  <div class="content-block" data-type="<%= content.tipe %>" data-id="<%= content.id %>">
+
+                    <input type="hidden" class="content-id" value="<%= content.id %>">
+
+                    <input type="hidden" class="content-type" value="<%= content.tipe %>">
+
+
+                    <div class="content-block-header">
+
+                      <div class="content-type">
+                        <%= content.tipe %>
+                      </div>
+
+                      <div class="content-actions">
+
+                        <button type="button" class="btn-up" title="Naik">
+                          ↑
+                        </button>
+
+                        <button type="button" class="btn-down" title="Turun">
+                          ↓
+                        </button>
+
+                        <button type="button" class="delete btn-delete" title="Hapus">
+                          Hapus
+                        </button>
+
+                      </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                 TEKS
+                 ========================= -->
+
+                    <% if (content.tipe==='TEKS' ) { %>
+
+                      <textarea class="content-text-input"
+                        placeholder="Tulis isi teks..."><%= content.isi || '' %></textarea>
+
+
+                      <!-- =========================
+                 GAMBAR
+                 ========================= -->
+
+                      <% } else if (content.tipe==='GAMBAR' ) { %>
+
+                        <div class="current-media">
+
+                          <small>
+                            Gambar saat ini:
+                          </small>
+
+                          <img src="<%= content.media_url %>" alt="<%= article.judul %>">
+
+                        </div>
+
+                        <label>
+                          Ganti gambar
+
+                          <input
+                            type="file"
+                            class="content-media-input"
+                            name="content_media_<%= content.id %>"
+                            accept="image/jpeg,image/png,image/jpg"
+                          >
+                        </label>
+
+                        <div class="media-preview"></div>
+
+
+                        <!-- =========================
+                 VIDEO
+                 ========================= -->
+
+                        <% } else if (content.tipe==='VIDEO' ) { %>
+
+                          <div class="current-media">
+
+                            <small>
+                              Video saat ini:
+                            </small>
+
+                            <video controls preload="metadata">
+
+                              <source src="<%= content.media_url %>">
+
+                              Browser Anda tidak mendukung video.
+
+                            </video>
+
+                          </div>
+
+                          <label>
+                            Ganti video
+
+                            <input
+                              type="file"
+                              class="content-media-input"
+                              name="content_media_<%= content.id %>"
+                              accept="video/mp4,video/webm,video/ogg"
+                            >
+                          </label>
+
+                          <div class="media-preview"></div>
+
+                          <% } %>
+
+                  </div>
+
+                  <% }) %>
+
+
+                    <% } else { %>
+
+                      <div class="empty-blocks" id="emptyBlocks">
+                        Belum ada block isi artikel.
+                        Silakan tambahkan Teks, Gambar, atau Video.
+                      </div>
+
+                      <% } %>
+
+            </div>
+
+
+            <!-- Data block akan dibuat oleh JavaScript -->
+            <input type="hidden" name="content_data" id="contentData">
+
+
+            <div class="form-actions">
+
+              <button type="submit" class="button primary">
+                Simpan Perubahan
+              </button>
+
+              <a class="button" href="/admin/artikel/detail/<%= article.id %>">
+                Batal
+              </a>
+
+            </div>
+
+          </form>
+
+        </div>
+
+
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+
+            const container = document.getElementById('contentBlocks');
+            const form = document.getElementById('articleForm');
+            const contentData = document.getElementById('contentData');
+
+
+            function removeEmptyMessage() {
+              const empty = document.getElementById('emptyBlocks');
+
+              if (empty) {
+                empty.remove();
+              }
+            }
+
+
+            function updateEmptyMessage() {
+
+              if (container.children.length === 0) {
+
+                container.innerHTML = `
+        <div class="empty-blocks" id="emptyBlocks">
+          Belum ada block isi artikel.
+          Silakan tambahkan Teks, Gambar, atau Video.
+        </div>
+      `;
+
+              }
+
+            }
+
+
+            function createBlock(type) {
+
+              removeEmptyMessage();
+
+              const block = document.createElement('div');
+
+              block.className = 'content-block';
+              block.dataset.type = type;
+
+              const newKey =
+                'new_' +
+                Date.now().toString(36) +
+                '_' +
+                Math.random().toString(36).substring(2, 8);
+
+              block.dataset.id = '';
+              block.dataset.key = newKey;
+
+
+              const header = `
+      <div class="content-block-header">
+
+        <div class="content-type">
+          ${type}
+        </div>
+
+        <div class="content-actions">
+
+          <button
+            type="button"
+            class="btn-up"
+            title="Naik"
+          >
+            ↑
+          </button>
+
+          <button
+            type="button"
+            class="btn-down"
+            title="Turun"
+          >
+            ↓
+          </button>
+
+          <button
+            type="button"
+            class="delete btn-delete"
+          >
+            Hapus
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+
+              let body = '';
+
+
+              if (type === 'TEKS') {
+
+                body = `
+        <textarea
+          class="content-text-input"
+          placeholder="Tulis isi teks..."
+        ></textarea>
+      `;
+
+              }
+
+
+              if (type === 'GAMBAR') {
+
+                body = `
+        <label>
+          Pilih gambar
+          <input
+            type="file"
+            class="content-media-input"
+            name="content_media_${newKey}"
+            accept="image/jpeg,image/png,image/jpg"
+          >
+        </label>
+
+        <div class="media-preview"></div>
+      `;
+
+              }
+
+
+              if (type === 'VIDEO') {
+
+                body = `
+        <label>
+          Pilih video
+
+          <input
+          type="file"
+          class="content-media-input"
+          name="content_media_${newKey}"
+          accept="video/mp4,video/webm,video/ogg"
+          >
+        </label>
+
+        <div class="media-preview"></div>
+      `;
+
+              }
+
+
+              block.innerHTML = `
+      <input
+        type="hidden"
+        class="content-id"
+        value=""
+      >
+
+      <input
+        type="hidden"
+        class="content-type"
+        value="${type}"
+      >
+
+      ${header}
+      ${body}
+    `;
+
+
+              container.appendChild(block);
+
+              bindBlock(block);
+
+              return block;
+
+            }
+
+
+            function bindBlock(block) {
+
+              const up = block.querySelector('.btn-up');
+              const down = block.querySelector('.btn-down');
+              const del = block.querySelector('.btn-delete');
+              const fileInput = block.querySelector('.content-media-input');
+
+
+              if (up) {
+
+                up.addEventListener('click', () => {
+
+                  const previous = block.previousElementSibling;
+
+                  if (
+                    previous &&
+                    previous.classList.contains('content-block')
+                  ) {
+
+                    container.insertBefore(block, previous);
+
+                  }
+
+                });
+
+              }
+
+
+              if (down) {
+
+                down.addEventListener('click', () => {
+
+                  const next = block.nextElementSibling;
+
+                  if (
+                    next &&
+                    next.classList.contains('content-block')
+                  ) {
+
+                    container.insertBefore(next, block);
+
+                  }
+
+                });
+
+              }
+
+
+              if (del) {
+
+                del.addEventListener('click', () => {
+
+                  if (
+                    confirm('Hapus block ini?')
+                  ) {
+
+                    block.remove();
+
+                    updateEmptyMessage();
+
+                  }
+
+                });
+
+              }
+
+
+              if (fileInput) {
+
+                fileInput.addEventListener('change', () => {
+
+                  const preview =
+                    block.querySelector('.media-preview');
+
+                  preview.innerHTML = '';
+
+                  const file = fileInput.files[0];
+
+                  if (!file) {
+                    return;
+                  }
+
+
+                  const url = URL.createObjectURL(file);
+
+
+                  if (block.dataset.type === 'GAMBAR') {
+
+                    const img = document.createElement('img');
+
+                    img.src = url;
+
+                    preview.appendChild(img);
+
+                  }
+
+
+                  if (block.dataset.type === 'VIDEO') {
+
+                    const video = document.createElement('video');
+
+                    video.src = url;
+                    video.controls = true;
+
+                    preview.appendChild(video);
+
+                  }
+
+                });
+
+              }
+
+            }
+
+
+            // Bind block yang sudah ada
+            container
+              .querySelectorAll('.content-block')
+              .forEach(bindBlock);
+
+
+            document
+              .getElementById('btnAddText')
+              .addEventListener('click', () => {
+
+                createBlock('TEKS');
+
+              });
+
+
+            document
+              .getElementById('btnAddImage')
+              .addEventListener('click', () => {
+
+                createBlock('GAMBAR');
+
+              });
+
+
+            document
+              .getElementById('btnAddVideo')
+              .addEventListener('click', () => {
+
+                createBlock('VIDEO');
+
+              });
+
+
+            // =========================================
+            // SERIALISASI BLOCK SAAT SUBMIT
+            // =========================================
+
+            form.addEventListener('submit', () => {
+
+              const blocks = [];
+
+              container
+                .querySelectorAll('.content-block')
+                .forEach((block, index) => {
+
+                  const type =
+                    block.dataset.type;
+
+                  const id =
+                    block.dataset.id || null;
+
+                  const item = {
+                    id: id ? Number(id) : null,
+                    key: block.dataset.key || null,
+                    tipe: type,
+                    urutan: index + 1
+                  };
+
+
+                  if (type === 'TEKS') {
+
+                    const textarea =
+                      block.querySelector('.content-text-input');
+
+                    item.isi =
+                      textarea ? textarea.value : '';
+
+                    item.media_url = null;
+
+                  } else {
+
+                    item.isi = null;
+
+                    const currentMedia =
+                      block.querySelector('.current-media img, .current-media video');
+
+                    item.media_url =
+                      currentMedia
+                        ? currentMedia.querySelector('source')?.src || currentMedia.src
+                        : null;
+
+                    const mediaInput =
+                      block.querySelector('.content-media-input');
+
+                    item.media_field =
+                      mediaInput ? mediaInput.name : null;
+
+                  }
+
+
+                  blocks.push(item);
+
+                });
+
+
+              contentData.value =
+                JSON.stringify(blocks);
+
+            });
+
+          });
+        </script>
+
+
+        <%- include('../partials/footer') %>

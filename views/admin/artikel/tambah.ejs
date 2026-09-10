@@ -1,3 +1,634 @@
-<%- include('../partials/header',{pageTitle:'Tambah Artikel'}) %><%- include('../partials/sidebar') %>
-<% if(error){ %><div class="alert error"><%= error %></div><% } %><form class="admin-form" method="post" action="/admin/artikel" enctype="multipart/form-data"><label>Judul<input name="judul" id="judul" value="<%= article?.judul||'' %>" required></label><label>Slug<input name="slug" id="slug" value="<%= article?.slug||'' %>" placeholder="otomatis dari judul"></label><label>Isi<textarea name="isi" rows="12"><%= article?.isi||'' %></textarea></label><div class="form-row"><label>Status<select name="status"><option value="1" <%= article?.status!=='0'?'selected':'' %>>Aktif</option><option value="0" <%= article?.status==='0'?'selected':'' %>>Nonaktif</option></select></label><label>Status Pin<select name="statuspin"><option value="0" <%= article?.statuspin!=='1'?'selected':'' %>>Tidak</option><option value="1" <%= article?.statuspin==='1'?'selected':'' %>>Ya</option></select></label></div><label>Multiple Gambar<input type="file" name="gambar" accept="image/jpeg,image/png,image/jpg,application/pdf" multiple data-preview-target="#article-preview"></label><div id="article-preview" class="upload-preview"></div><div class="form-actions"><button class="button primary" type="submit">Simpan</button><a class="button" href="/admin/artikel">Batal</a></div></form>
+<%- include('../partials/header',{pageTitle:'Tambah Artikel'}) %>
+<%- include('../partials/sidebar') %>
+
+<% if (error) { %>
+  <div class="alert error">
+    <%= error %>
+  </div>
+<% } %>
+
+<form
+  class="admin-form"
+  method="post"
+  action="/admin/artikel"
+  enctype="multipart/form-data"
+  id="artikelForm"
+>
+  <label>
+    Judul
+    <input
+      name="judul"
+      id="judul"
+      value="<%= article?.judul || '' %>"
+      required
+    >
+  </label>
+
+  <label>
+    Slug
+    <input
+      name="slug"
+      id="slug"
+      value="<%= article?.slug || '' %>"
+      placeholder="otomatis dari judul"
+    >
+  </label>
+
+  <div class="content-editor">
+
+    <div class="content-editor-header">
+      <strong>Isi Artikel</strong>
+
+      <div class="content-buttons">
+        <button type="button" class="button" id="btnTambahTeks">
+          + Teks
+        </button>
+
+        <button type="button" class="button" id="btnTambahGambar">
+          + Gambar
+        </button>
+
+        <button type="button" class="button" id="btnTambahVideo">
+          + Video
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="contentBlocks"
+      class="content-blocks"
+    ></div>
+
+    <div
+      id="contentEmpty"
+      class="content-empty"
+    >
+      Belum ada isi artikel.<br>
+      Gunakan tombol <strong>+ Teks</strong>,
+      <strong>+ Gambar</strong>, atau
+      <strong>+ Video</strong>.
+    </div>
+
+    <!-- Data blok artikel dikirim sebagai JSON -->
+    <input
+      type="hidden"
+      name="content_data"
+      id="contentData"
+    >
+
+  </div>
+
+  <div class="form-row">
+
+    <label>
+      Status
+      <select name="status">
+        <option
+          value="1"
+          <%= article?.status !== '0' ? 'selected' : '' %>
+        >
+          Aktif
+        </option>
+
+        <option
+          value="0"
+          <%= article?.status === '0' ? 'selected' : '' %>
+        >
+          Nonaktif
+        </option>
+      </select>
+    </label>
+
+    <label>
+      Status Pin
+      <select name="statuspin">
+        <option
+          value="0"
+          <%= article?.statuspin !== '1' ? 'selected' : '' %>
+        >
+          Tidak
+        </option>
+
+        <option
+          value="1"
+          <%= article?.statuspin === '1' ? 'selected' : '' %>
+        >
+          Ya
+        </option>
+      </select>
+    </label>
+
+  </div>
+
+  <div class="form-actions">
+
+    <button
+      class="button primary"
+      type="submit"
+    >
+      Simpan
+    </button>
+
+    <a
+      class="button"
+      href="/admin/artikel"
+    >
+      Batal
+    </a>
+
+  </div>
+
+</form>
+
+<style>
+  .content-editor {
+    margin-top: 20px;
+  }
+
+  .content-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .content-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .content-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .content-block {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background: #fafafa;
+  }
+
+  .content-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .content-block-title {
+    font-weight: 600;
+  }
+
+  .content-block-actions {
+    display: flex;
+    gap: 5px;
+  }
+
+  .content-block textarea {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+
+  .content-block input[type="file"] {
+    width: 100%;
+  }
+
+  .content-preview {
+    margin-top: 10px;
+  }
+
+  .content-preview img,
+  .content-preview video {
+    max-width: 100%;
+    max-height: 300px;
+    display: block;
+    border-radius: 6px;
+  }
+
+  .content-empty {
+    padding: 30px;
+    text-align: center;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    color: #777;
+  }
+
+  .content-label {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    const blocksContainer =
+      document.getElementById('contentBlocks');
+
+    const emptyMessage =
+      document.getElementById('contentEmpty');
+
+    const contentData =
+      document.getElementById('contentData');
+
+    const form =
+      document.getElementById('artikelForm');
+
+    const btnTambahTeks =
+      document.getElementById('btnTambahTeks');
+
+    const btnTambahGambar =
+      document.getElementById('btnTambahGambar');
+
+    const btnTambahVideo =
+      document.getElementById('btnTambahVideo');
+
+
+    function updateEmptyMessage() {
+
+      if (blocksContainer.children.length === 0) {
+        emptyMessage.style.display = 'block';
+      } else {
+        emptyMessage.style.display = 'none';
+      }
+
+    }
+
+
+    function createBlock(type) {
+
+      const block =
+        document.createElement('div');
+
+      block.className =
+        'content-block';
+
+      block.dataset.type =
+        type;
+
+
+      const header =
+        document.createElement('div');
+
+      header.className =
+        'content-block-header';
+
+
+      const title =
+        document.createElement('div');
+
+      title.className =
+        'content-block-title';
+
+
+      if (type === 'TEKS') {
+        title.textContent =
+          'Teks';
+      }
+
+      if (type === 'GAMBAR') {
+        title.textContent =
+          'Gambar';
+      }
+
+      if (type === 'VIDEO') {
+        title.textContent =
+          'Video';
+      }
+
+
+      const actions =
+        document.createElement('div');
+
+      actions.className =
+        'content-block-actions';
+
+
+      const upButton =
+        document.createElement('button');
+
+      upButton.type =
+        'button';
+
+      upButton.className =
+        'button';
+
+      upButton.textContent =
+        '↑';
+
+      upButton.title =
+        'Naik';
+
+
+      const downButton =
+        document.createElement('button');
+
+      downButton.type =
+        'button';
+
+      downButton.className =
+        'button';
+
+      downButton.textContent =
+        '↓';
+
+      downButton.title =
+        'Turun';
+
+
+      const deleteButton =
+        document.createElement('button');
+
+      deleteButton.type =
+        'button';
+
+      deleteButton.className =
+        'button';
+
+      deleteButton.textContent =
+        'Hapus';
+
+
+      actions.appendChild(upButton);
+      actions.appendChild(downButton);
+      actions.appendChild(deleteButton);
+
+
+      header.appendChild(title);
+      header.appendChild(actions);
+
+
+      block.appendChild(header);
+
+
+      if (type === 'TEKS') {
+
+        const textarea =
+          document.createElement('textarea');
+
+        textarea.className =
+          'content-text-input';
+
+        textarea.placeholder =
+          'Tulis paragraf artikel di sini...';
+
+        block.appendChild(textarea);
+
+      }
+
+
+      if (type === 'GAMBAR') {
+
+        const label =
+          document.createElement('div');
+
+        label.className =
+          'content-label';
+
+        label.textContent =
+          'Pilih gambar';
+
+        const input =
+          document.createElement('input');
+
+        input.type =
+          'file';
+
+        input.name =
+          'content_media';
+
+        input.accept =
+          'image/jpeg,image/png,image/jpg';
+
+        const preview =
+          document.createElement('div');
+
+        preview.className =
+          'content-preview';
+
+
+        input.addEventListener('change', () => {
+
+          preview.innerHTML = '';
+
+          const file =
+            input.files[0];
+
+          if (!file) return;
+
+          const image =
+            document.createElement('img');
+
+          image.src =
+            URL.createObjectURL(file);
+
+          preview.appendChild(image);
+
+        });
+
+
+        block.appendChild(label);
+        block.appendChild(input);
+        block.appendChild(preview);
+
+      }
+
+
+      if (type === 'VIDEO') {
+
+        const label =
+          document.createElement('div');
+
+        label.className =
+          'content-label';
+
+        label.textContent =
+          'Pilih video';
+
+
+        const input =
+          document.createElement('input');
+
+        input.type =
+          'file';
+
+        input.name =
+          'content_media';
+
+        input.accept =
+          'video/mp4,video/webm,video/ogg';
+
+
+        const preview =
+          document.createElement('div');
+
+        preview.className =
+          'content-preview';
+
+
+        input.addEventListener('change', () => {
+
+          preview.innerHTML = '';
+
+          const file =
+            input.files[0];
+
+          if (!file) return;
+
+          const video =
+            document.createElement('video');
+
+          video.controls =
+            true;
+
+          video.src =
+            URL.createObjectURL(file);
+
+          preview.appendChild(video);
+
+        });
+
+
+        block.appendChild(label);
+        block.appendChild(input);
+        block.appendChild(preview);
+
+      }
+
+
+      upButton.addEventListener('click', () => {
+
+        const previous =
+          block.previousElementSibling;
+
+        if (previous) {
+          blocksContainer.insertBefore(
+            block,
+            previous
+          );
+        }
+
+        updateEmptyMessage();
+
+      });
+
+
+      downButton.addEventListener('click', () => {
+
+        const next =
+          block.nextElementSibling;
+
+        if (next) {
+          blocksContainer.insertBefore(
+            next,
+            block
+          );
+        }
+
+        updateEmptyMessage();
+
+      });
+
+
+      deleteButton.addEventListener('click', () => {
+
+        if (
+          !confirm(
+            'Hapus blok ini?'
+          )
+        ) {
+          return;
+        }
+
+        block.remove();
+
+        updateEmptyMessage();
+
+      });
+
+
+      blocksContainer.appendChild(block);
+
+      updateEmptyMessage();
+
+    }
+
+
+    btnTambahTeks.addEventListener(
+      'click',
+      () => createBlock('TEKS')
+    );
+
+
+    btnTambahGambar.addEventListener(
+      'click',
+      () => createBlock('GAMBAR')
+    );
+
+
+    btnTambahVideo.addEventListener(
+      'click',
+      () => createBlock('VIDEO')
+    );
+
+
+    form.addEventListener('submit', () => {
+
+      const blocks =
+        Array.from(
+          blocksContainer.children
+        );
+
+
+      const data =
+        blocks.map(block => {
+
+          const type =
+            block.dataset.type;
+
+
+          if (type === 'TEKS') {
+
+            const textarea =
+              block.querySelector(
+                '.content-text-input'
+              );
+
+            return {
+              tipe: 'TEKS',
+              isi: textarea
+                ? textarea.value
+                : ''
+            };
+
+          }
+
+
+          return {
+            tipe: type
+          };
+
+        });
+
+
+      contentData.value =
+        JSON.stringify(data);
+
+    });
+
+
+    updateEmptyMessage();
+
+  });
+</script>
+
 <%- include('../partials/footer') %>

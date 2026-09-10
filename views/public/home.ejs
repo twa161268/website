@@ -102,12 +102,25 @@
 
     <% banners.forEach(banner => { %>
 
-      <div class="home-banner banner-<%= banner.judul.replace('BANNER', '') %>">
-        <img
-          src="<%= banner.gambar %>"
-          alt="<%= banner.judul %>"
+      <% if (banner.artikel_slug) { %>
+        <a
+          href="/artikel/<%= banner.artikel_slug %>"
+          class="home-banner banner-<%= banner.judul.replace('BANNER', '') %>"
+          aria-label="Buka artikel: <%= banner.artikel_judul || banner.judul %>"
         >
-      </div>
+          <img
+            src="<%= banner.gambar %>"
+            alt="<%= banner.judul %>"
+          >
+        </a>
+      <% } else { %>
+        <div class="home-banner banner-<%= banner.judul.replace('BANNER', '') %>">
+          <img
+            src="<%= banner.gambar %>"
+            alt="<%= banner.judul %>"
+          >
+        </div>
+      <% } %>
 
     <% }) %>
 
@@ -130,9 +143,16 @@
             <h2><%= article.judul %></h2>
           </a>
 
+          <%
+            const overviewText = article.overview || '';
+            const cleanOverview = String(overviewText)
+              .replace(/<[^>]*>/g, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+          %>
+
           <p>
-            <%= String(article.isi || '').replace(/<[^>]*>/g,'').slice(0,120) %>
-            <%= String(article.isi || '').replace(/<[^>]*>/g,'').length > 120 ? '…' : '' %>
+            <%= cleanOverview.slice(0, 120) %><%= cleanOverview.length > 120 ? '…' : '' %>
           </p>
         </article>
       <% }) %>

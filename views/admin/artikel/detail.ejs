@@ -1,1 +1,172 @@
-<%- include('../partials/header',{pageTitle:'Detail Artikel'}) %><%- include('../partials/sidebar') %><div class="detail-card"><h2><%= article.judul %></h2><p><strong>Slug:</strong> <%= article.slug %></p><p><strong>Status:</strong> <%= article.status==='1'?'Aktif':'Nonaktif' %> &nbsp; <strong>Pin:</strong> <%= article.statuspin==='1'?'Ya':'Tidak' %></p><div class="rich-content"><%- article.isi||'' %></div><h3>Gambar</h3><div class="detail-images"><% images.forEach(image=>{ %><img src="<%= image.gambar %>" alt="<%= article.judul %>"><% }) %></div><a class="button primary" href="/admin/artikel/edit/<%= article.id %>">Edit</a> <a class="button" href="/admin/artikel">Kembali</a></div><%- include('../partials/footer') %>
+<%- include('../partials/header',{pageTitle:'Detail Artikel'}) %>
+<%- include('../partials/sidebar') %>
+
+<style>
+  .article-detail-card {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  }
+
+  .article-detail-card h2 {
+    margin-bottom: 10px;
+  }
+
+  .article-meta {
+    color: #666;
+    margin-bottom: 30px;
+  }
+
+  .article-content {
+    margin-top: 20px;
+  }
+
+  .content-text {
+    margin: 0 0 20px;
+    line-height: 1.8;
+    font-size: 16px;
+    white-space: pre-line;
+  }
+
+  .content-image {
+    margin: 25px 0;
+    text-align: center;
+  }
+
+  .content-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: inline-block;
+  }
+
+  .content-video {
+    margin: 25px 0;
+    text-align: center;
+  }
+
+  .content-video video {
+    max-width: 100%;
+    width: 800px;
+    border-radius: 8px;
+  }
+
+  .content-empty {
+    padding: 20px;
+    color: #777;
+    background: #f7f7f7;
+    border-radius: 8px;
+  }
+
+  .article-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+  }
+</style>
+
+<div class="article-detail-card">
+
+  <h2><%= article.judul %></h2>
+
+  <div class="article-meta">
+    <div>
+      <strong>Slug:</strong>
+      <%= article.slug %>
+    </div>
+
+    <div>
+      <strong>Status:</strong>
+      <%= article.status === '1' ? 'Aktif' : 'Nonaktif' %>
+      &nbsp;&nbsp;
+
+      <strong>Pin:</strong>
+      <%= article.statuspin === '1' ? 'Ya' : 'Tidak' %>
+    </div>
+  </div>
+
+
+  <!-- =========================================
+       ISI ARTIKEL BERDASARKAN URUTAN BLOCK
+       ========================================= -->
+
+  <div class="article-content">
+
+    <% if (contents && contents.length > 0) { %>
+
+      <% contents.forEach(content => { %>
+
+        <% if (content.tipe === 'TEKS') { %>
+
+          <div class="content-text">
+            <%= content.isi || '' %>
+          </div>
+
+
+        <% } else if (content.tipe === 'GAMBAR') { %>
+
+          <div class="content-image">
+
+            <img
+              src="<%= content.media_url %>"
+              alt="<%= article.judul %>"
+            >
+
+          </div>
+
+
+        <% } else if (content.tipe === 'VIDEO') { %>
+
+          <div class="content-video">
+
+            <video controls preload="metadata">
+              <source src="<%= content.media_url %>">
+              Browser Anda tidak mendukung pemutar video.
+            </video>
+
+          </div>
+
+        <% } %>
+
+      <% }) %>
+
+
+    <% } else { %>
+
+      <div class="content-empty">
+        Belum ada isi artikel.
+      </div>
+
+    <% } %>
+
+  </div>
+
+
+  <!-- =========================================
+       TOMBOL
+       ========================================= -->
+
+  <div class="article-actions">
+
+    <a
+      class="button primary"
+      href="/admin/artikel/edit/<%= article.id %>"
+    >
+      Edit
+    </a>
+
+    <a
+      class="button"
+      href="/admin/artikel"
+    >
+      Kembali
+    </a>
+
+  </div>
+
+</div>
+
+<%- include('../partials/footer') %>

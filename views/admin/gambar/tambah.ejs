@@ -1,1 +1,18 @@
-<%- include('../partials/header',{pageTitle:'Tambah Gambar'}) %><%- include('../partials/sidebar') %><% if(error){ %><div class="alert error"><%= error %></div><% } %><form class="admin-form" method="post" action="/admin/gambar" enctype="multipart/form-data"><label>Judul<input name="judul" value="<%= item?.judul||'' %>" required></label><label>Slug<input name="slug" value="<%= item?.slug||'' %>"></label><label>Kategori<select name="kategori" required><% categories.forEach(cat=>{ %><option value="<%= cat %>" <%= item?.kategori===cat?'selected':'' %>><%= cat %></option><% }) %></select></label><label>File<input type="file" name="gambar" accept="image/jpeg,image/png,image/jpg,application/pdf" required data-preview-target="#gambar-preview"></label><div id="gambar-preview" class="upload-preview"></div><div class="form-row"><label>Status<select name="status"><option value="1">Aktif</option><option value="0">Nonaktif</option></select></label><label>Status Pin<select name="statuspin"><option value="0">Tidak</option><option value="1">Ya</option></select></label></div><div class="form-actions"><button class="button primary">Simpan</button><a class="button" href="/admin/gambar">Batal</a></div></form><%- include('../partials/footer') %>
+<%- include('../partials/header',{pageTitle:'Tambah Gambar'}) %><%- include('../partials/sidebar') %><% if(error){ %><div class="alert error"><%= error %></div><% } %><form class="admin-form" method="post" action="/admin/gambar" enctype="multipart/form-data"><label>Judul<input name="judul" value="<%= item?.judul||'' %>" required></label><label>Slug<input name="slug" value="<%= item?.slug||'' %>"></label><label>Kategori<select name="kategori" id="kategori" required><% categories.forEach(cat=>{ %><option value="<%= cat %>" <%= item?.kategori===cat?'selected':'' %>><%= cat %></option><% }) %></select></label>
+<label id="artikel-link-group">Link Artikel<select name="artikel_id" id="artikel_id"><option value="">-- Tidak ada link --</option><% (articles || []).forEach(article=>{ %><option value="<%= article.id %>" <%= String(item?.artikel_id || '')===String(article.id)?'selected':'' %>><%= article.judul %><%= article.status==='0' ? ' (Nonaktif)' : '' %></option><% }) %></select><small>Pilih artikel yang akan dibuka ketika banner diklik.</small></label><label>File<input type="file" name="gambar" accept="image/jpeg,image/png,image/jpg,application/pdf" required data-preview-target="#gambar-preview"></label><div id="gambar-preview" class="upload-preview"></div><div class="form-row"><label>Status<select name="status"><option value="1">Aktif</option><option value="0">Nonaktif</option></select></label><label>Status Pin<select name="statuspin"><option value="0">Tidak</option><option value="1">Ya</option></select></label></div><div class="form-actions"><button class="button primary">Simpan</button><a class="button" href="/admin/gambar">Batal</a></div></form><script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const kategori = document.getElementById('kategori');
+    const group = document.getElementById('artikel-link-group');
+    const artikel = document.getElementById('artikel_id');
+
+    function toggleArtikelLink() {
+      const show = kategori.value === 'BANNER';
+      group.style.display = show ? '' : 'none';
+      if (!show) artikel.value = '';
+    }
+
+    kategori.addEventListener('change', toggleArtikelLink);
+    toggleArtikelLink();
+  });
+</script>
+<%- include('../partials/footer') %>

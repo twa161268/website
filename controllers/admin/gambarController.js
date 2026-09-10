@@ -110,6 +110,14 @@ const categories = [
   'BANNER',
 ];
 
+async function getActiveArticles() {
+  return db.query(`
+    SELECT id, judul, slug, status
+    FROM artikel
+    ORDER BY statuspin DESC, created_at DESC
+  `);
+}
+
 async function uploadToSupabase(file) {
   if (!file || !file.buffer) {
     throw new Error('File upload tidak ditemukan.');
@@ -147,9 +155,16 @@ async function uploadToSupabase(file) {
 
 async function index(req, res, next) {
   try {
-    const items = await db.query(
-      'SELECT * FROM gambar ORDER BY created_at DESC'
-    );
+    const items = await db.query(`
+      SELECT
+        g.*,
+        a.judul AS artikel_judul,
+        a.slug AS artikel_slug,
+        a.status AS artikel_status
+      FROM gambar g
+      LEFT JOIN artikel a ON a.id = g.artikel_id
+      ORDER BY g.created_at DESC
+    `);
 
     res.render('admin/gambar/index', { items });
   } catch (e) {
@@ -157,12 +172,17 @@ async function index(req, res, next) {
   }
 }
 
-function showCreate(req, res) {
-  res.render('admin/gambar/tambah', {
-    item: null,
-    categories,
-    error: null,
-  });
+async function showCreate(req, res, next) {
+  try {
+    res.render('admin/gambar/tambah', {
+      item: null,
+      categories,
+      articles: await getActiveArticles(),
+      error: null,
+    });
+  } catch (e) {
+    next(e);
+  }
 }
 
 async function create(req, res, next) {
@@ -186,6 +206,24 @@ async function create(req, res, next) {
       throw new Error('File wajib dipilih.');
     }
 
+    let artikelId = null;
+
+    if (kategori === 'BANNER' && req.body.artikel_id) {
+      artikelId = Number(req.body.artikel_id);
+      if (!Number.isInteger(artikelId) || artikelId <= 0) {
+        throw new Error('Artikel yang dipilih tidak valid.');
+      }
+
+      const articleRows = await db.query(
+        'SELECT id FROM artikel WHERE id=$1',
+        [artikelId]
+      );
+
+      if (!articleRows[0]) {
+        throw new Error('Artikel yang dipilih tidak ditemukan.');
+      }
+    }
+
     const slug = await uniqueSlug(req.body.slug || judul);
 
     const uploaded = await uploadToSupabase(file);
@@ -194,8 +232,8 @@ async function create(req, res, next) {
 
     await db.query(
       `INSERT INTO gambar
-      (judul,slug,gambar,status,statuspin,created_at,updated_at,kategori)
-      VALUES ($1,$2,$3,$4,$5,NOW(),NOW(),$6)`,
+      (judul,slug,gambar,status,statuspin,created_at,updated_at,kategori,artikel_id)
+      VALUES ($1,$2,$3,$4,$5,NOW(),NOW(),$6,$7)`,
       [
         judul,
         slug,
@@ -203,6 +241,7 @@ async function create(req, res, next) {
         req.body.status === '1' ? '1' : '0',
         req.body.statuspin === '1' ? '1' : '0',
         kategori,
+        artikelId,
       ]
     );
 
@@ -222,6 +261,7 @@ async function create(req, res, next) {
       return res.status(400).render('admin/gambar/tambah', {
         item: req.body,
         categories,
+        articles: await getActiveArticles(),
         error: e.message,
       });
     }
@@ -246,6 +286,7 @@ async function showEdit(req, res, next) {
     res.render('admin/gambar/edit', {
       item: rows[0],
       categories,
+      articles: await getActiveArticles(),
       error: null,
     });
   } catch (e) {
@@ -279,6 +320,24 @@ async function update(req, res, next) {
       throw new Error('Kategori tidak valid.');
     }
 
+    let artikelId = null;
+
+    if (kategori === 'BANNER' && req.body.artikel_id) {
+      artikelId = Number(req.body.artikel_id);
+      if (!Number.isInteger(artikelId) || artikelId <= 0) {
+        throw new Error('Artikel yang dipilih tidak valid.');
+      }
+
+      const articleRows = await db.query(
+        'SELECT id FROM artikel WHERE id=$1',
+        [artikelId]
+      );
+
+      if (!articleRows[0]) {
+        throw new Error('Artikel yang dipilih tidak ditemukan.');
+      }
+    }
+
     const slug = await uniqueSlug(req.body.slug || judul, id);
 
     let dbPath = rows[0].gambar;
@@ -299,8 +358,9 @@ async function update(req, res, next) {
            status=$4,
            statuspin=$5,
            updated_at=NOW(),
-           kategori=$6
-       WHERE id=$7`,
+           kategori=$6,
+           artikel_id=$7
+       WHERE id=$8`,
       [
         judul,
         slug,
@@ -308,6 +368,7 @@ async function update(req, res, next) {
         req.body.status === '1' ? '1' : '0',
         req.body.statuspin === '1' ? '1' : '0',
         kategori,
+        artikelId,
         id,
       ]
     );
@@ -337,6 +398,7 @@ async function update(req, res, next) {
           ...req.body,
         },
         categories,
+        articles: await getActiveArticles(),
         error: e.message,
       });
     }
@@ -440,6 +502,14 @@ const categories = [
   'ABOUT',
   'BANNER',
 ];
+
+async function getActiveArticles() {
+  return db.query(`
+    SELECT id, judul, slug, status
+    FROM artikel
+    ORDER BY statuspin DESC, created_at DESC
+  `);
+}
 async function index(req, res, next) {
   try {
     const items = await db.query(

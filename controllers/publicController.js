@@ -79,19 +79,29 @@ async function home(req, res, next) {
       `),
 
         db.query(`
-      SELECT *
-      FROM gambar
-      WHERE kategori = 'BANNER'
-      AND status = '1'
-      AND judul IN ('BANNER1', 'BANNER2', 'BANNER3', 'BANNER4')
+      SELECT
+        g.*,
+        CASE
+          WHEN a.status = '1' THEN a.slug
+          ELSE NULL
+        END AS artikel_slug,
+        CASE
+          WHEN a.status = '1' THEN a.judul
+          ELSE NULL
+        END AS artikel_judul
+      FROM gambar g
+      LEFT JOIN artikel a ON a.id = g.artikel_id
+      WHERE g.kategori = 'BANNER'
+        AND g.status = '1'
+        AND g.judul IN ('BANNER1', 'BANNER2', 'BANNER3', 'BANNER4')
       ORDER BY
-      CASE judul
-        WHEN 'BANNER1' THEN 1
-        WHEN 'BANNER2' THEN 2
-        WHEN 'BANNER3' THEN 3
-        WHEN 'BANNER4' THEN 4
-        ELSE 99
-      END
+        CASE g.judul
+          WHEN 'BANNER1' THEN 1
+          WHEN 'BANNER2' THEN 2
+          WHEN 'BANNER3' THEN 3
+          WHEN 'BANNER4' THEN 4
+          ELSE 99
+        END
       `),
 
         getTulisanByJudul('TITLE'),
@@ -99,14 +109,27 @@ async function home(req, res, next) {
         getTulisanByJudul('SUBTITLE'),
 
         db.query(`
-        SELECT a.*,
+        SELECT
+          a.*,
           (
-            SELECT ag.gambar
-            FROM artikel_gambar ag
-            WHERE ag.artikel_id = a.id
-            ORDER BY ag.urutan ASC, ag.id ASC
+            SELECT ak.media_url
+            FROM artikel_konten ak
+            WHERE ak.artikel_id = a.id
+              AND ak.tipe = 'GAMBAR'
+              AND ak.media_url IS NOT NULL
+            ORDER BY ak.urutan ASC, ak.id ASC
             LIMIT 1
-          ) AS thumbnail
+          ) AS thumbnail,
+          (
+            SELECT ak.isi
+            FROM artikel_konten ak
+            WHERE ak.artikel_id = a.id
+              AND ak.tipe = 'TEKS'
+              AND ak.isi IS NOT NULL
+              AND TRIM(ak.isi) <> ''
+            ORDER BY ak.urutan ASC, ak.id ASC
+            LIMIT 1
+          ) AS overview
         FROM artikel a
         WHERE a.status = '1'
         ORDER BY a.statuspin DESC, a.created_at DESC
@@ -238,9 +261,47 @@ async function gallery(req, res, next) {
 async function artikel(req, res, next) {
   try {
     const articles = await db.query(
-      "SELECT a.*, (SELECT ag.gambar FROM artikel_gambar ag WHERE ag.artikel_id = a.id ORDER BY ag.urutan ASC, ag.id ASC LIMIT 1) AS thumbnail FROM artikel a WHERE a.status = '1' ORDER BY a.statuspin DESC, a.created_at DESC"
+      `
+      SELECT
+        a.*,
+
+        -- Ambil gambar pertama sebagai thumbnail
+        (
+          SELECT ak.media_url
+          FROM artikel_konten ak
+          WHERE ak.artikel_id = a.id
+            AND ak.tipe = 'GAMBAR'
+            AND ak.media_url IS NOT NULL
+          ORDER BY ak.urutan ASC, ak.id ASC
+          LIMIT 1
+        ) AS thumbnail,
+
+        -- Ambil block TEKS pertama sebagai overview
+        (
+          SELECT ak.isi
+          FROM artikel_konten ak
+          WHERE ak.artikel_id = a.id
+            AND ak.tipe = 'TEKS'
+            AND ak.isi IS NOT NULL
+            AND TRIM(ak.isi) <> ''
+          ORDER BY ak.urutan ASC, ak.id ASC
+          LIMIT 1
+        ) AS overview
+
+      FROM artikel a
+
+      WHERE a.status = '1'
+
+      ORDER BY
+        a.statuspin DESC,
+        a.created_at DESC
+      `
     );
-    res.render('public/artikel', { articles, footer: await getFooter() });
+
+    res.render('public/artikel', {
+      articles,
+      footer: await getFooter(),
+    });
   } catch (err) {
     next(err);
   }
@@ -252,21 +313,35 @@ async function detailArtikel(req, res, next) {
       "SELECT * FROM artikel WHERE slug = $1 AND status = '1' LIMIT 1",
       [req.params.slug]
     );
-    if (!articles[0])
-      return res
-        .status(404)
-        .render('error', { status: 404, message: 'Artikel tidak ditemukan.' });
-    const images = await db.query(
-      'SELECT * FROM artikel_gambar WHERE artikel_id = $1 ORDER BY urutan ASC, id ASC',
-      [articles[0].id]
+
+    if (!articles[0]) {
+      return res.status(404).render('error', {
+        status: 404,
+        message: 'Artikel tidak ditemukan.',
+      });
+    }
+
+    const article = articles[0];
+
+    // =====================================================
+    // AMBIL CONTENT BLOCK
+    // =====================================================
+
+    const contents = await db.query(
+      `SELECT *
+       FROM artikel_konten
+       WHERE artikel_id = $1
+       ORDER BY urutan ASC, id ASC`,
+      [article.id]
     );
 
-    // Ambil logo SOSMED dari tabel gambar
-    // dan alamatnya dari tabel tulisan
+    // =====================================================
+    // RENDER
+    // =====================================================
 
     res.render('public/detailArtikel', {
-      article: articles[0],
-      images,
+      article,
+      contents,
       footer: await getFooter(),
     });
   } catch (err) {
