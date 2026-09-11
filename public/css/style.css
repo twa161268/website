@@ -1145,7 +1145,7 @@ a {
    TABLET
    ========================================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1030px) {
   .media-grid,
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1180,9 +1180,15 @@ a {
   }
 
   /* BANNERS */
-  .home-banner.banner-1,
+  .home-banner.banner-1 {
+    top: 20%;
+    right: 3%;
+    width: 60%;
+  }
+
   .home-banner.banner-2 {
-    width: 58%;
+    top: 30%;
+    width: 60%;
     right: 3%;
   }
 
@@ -1197,16 +1203,14 @@ a {
   }
   /* ARTICLES */
   .article-cards {
+    bottom: 30%;
     right: 3%;
-
-    width: 43%;
-
+    width: 60%;
     gap: 10px;
   }
 
   .article-card {
     padding: 9px;
-
     border-radius: 18px;
   }
 
@@ -1275,23 +1279,28 @@ a {
    HP PORTRAIT
    ========================================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (orientation: portrait) {
   html,
   body {
     width: 100%;
-
     overflow-x: hidden;
   }
 
+  /* HEADER */
   .site-header {
     padding: 15px;
   }
 
+  /* HERO */
   .hero {
     min-height: 100svh;
     height: 100svh;
 
     padding: 85px 12px 20px;
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
   }
 
   /* VIDEO */
@@ -1309,14 +1318,16 @@ a {
   .hero-title,
   .hero-text {
     left: 4%;
-    top: 22%;
+    top: 12%;
 
-    width: 32%;
+    width: 92%;
+
+    text-align: center;
   }
 
   .hero-title h1,
   .hero-text h1 {
-    font-size: clamp(16px, 5vw, 24px);
+    font-size: clamp(18px, 5vw, 24px);
 
     line-height: 1.15;
 
@@ -1330,82 +1341,112 @@ a {
     line-height: 1.3;
   }
 
-  /* BANNER 1 */
+  /* =====================================================
+     BANNER 1
+     ===================================================== */
+
   .home-banner.banner-1 {
-    top: 18%;
-    right: 2%;
-    width: 62%;
+    top: 12%;
+    right: 3%;
+
+    width: 94%;
   }
 
-  /* BANNER 2 */
+  /* =====================================================
+     BANNER 2
+     ===================================================== */
+
   .home-banner.banner-2 {
-    top: 33%;
-    right: 2%;
-    width: 62%;
+    top: 20%;
+    right: 3%;
+
+    width: 94%;
   }
 
-  /* BANNER 3 */
+  /* =====================================================
+     BANNER 3
+     ===================================================== */
+
   .home-banner.banner-3 {
-    left: 2%;
-    bottom: 3%;
-    width: 19%;
+    top: 30%;
+    left: 9%;
+    bottom: 43%;
+    width: 40%;
   }
 
-  /* BANNER 4 */
+  /* =====================================================
+     BANNER 4
+     ===================================================== */
+
   .home-banner.banner-4 {
-    left: 22%;
-    bottom: 3%;
-    width: 19%;
+    left: 51%;
+    top: 30%;
+    bottom: 43%;
+    width: 40%;
   }
 
-  /* ARTICLES */
+  /* =====================================================
+     ARTICLE - HANYA 1
+     ===================================================== */
+
   .article-cards {
-    right: 2%;
+    left: 5%;
+    right: auto;
     bottom: 7%;
+    width: 90%;
+    display: block;
+  }
 
-    width: 53%;
-
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-
-    gap: 4px;
+  /*
+   * Hanya article pertama yang ditampilkan
+   */
+  .article-cards .article-card:not(:first-child) {
+    display: none;
   }
 
   .article-card {
-    padding: 5px;
+    width: 100%;
 
-    border-radius: 10px;
+    padding: 10px;
+
+    border-radius: 14px;
   }
 
   .article-card img,
-  .image-placeholder {
-    height: 55px;
+  .article-card .image-placeholder {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
   }
 
   .article-card h2 {
-    font-size: 9px;
-
-    line-height: 1.15;
-
-    margin: 5px 0 3px;
+    font-size: 16px;
+    line-height: 1;
+    margin: 10px 0 6px;
   }
 
   .article-card p {
-    font-size: 8px;
-
+    font-size: 12px;
     line-height: 1.2;
   }
 
-  /* MORE */
+  /* =====================================================
+     MORE ARTICLES
+     ===================================================== */
+
   .more-articles {
-    right: 2%;
+    left: 5%;
+    right: auto;
     bottom: 3%;
-
-    width: 53%;
-
-    font-size: 9px;
+    width: 82%;
+    text-align: center;
+    font-size: 13px;
   }
 
-  /* SOCIAL MEDIA */
+  /* =====================================================
+     SOCIAL MEDIA
+     ===================================================== */
+
   .hero-sosmed {
     top: 65px;
 
@@ -1442,6 +1483,7 @@ a {
     display: none;
   }
 
+  /* MENU */
   .public-nav {
     right: 15px;
     top: 60px;
@@ -1465,6 +1507,7 @@ a {
   .rich-content {
     font-size: 16px;
     line-height: 1.65;
+
     white-space: pre-line;
   }
 
@@ -1502,7 +1545,7 @@ a {
    HP LANDSCAPE
    ========================================================= */
 
-@media (max-width: 900px) and (orientation: landscape) {
+@media (max-width: 1000px) and (orientation: landscape) {
   html,
   body {
     width: 100%;
@@ -1555,14 +1598,14 @@ a {
 
   /* BANNER1 */
   .home-banner.banner-1 {
-    top: 16%;
+    top: 9%;
     right: 3%;
     width: 60%;
   }
 
   /* BANNER2 */
   .home-banner.banner-2 {
-    top: 35%;
+    top: 28%;
     right: 3%;
     width: 60%;
   }
@@ -1586,7 +1629,7 @@ a {
     right: 3%;
     bottom: 7%;
 
-    width: 44%;
+    width: 60%;
 
     grid-template-columns: repeat(3, minmax(0, 1fr));
 
@@ -1791,4 +1834,88 @@ a {
   .more-articles {
     bottom: 2%;
   }
+}
+
+/* ===== FIX BACKGROUND UNTUK LAYAR TIDAK WIDESCREEN ===== */
+@media (max-aspect-ratio: 3/2) {
+  .hero {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #8bdbe6;
+  }
+}
+
+/* =========================================================
+   HOME + FOOTER SELALU TERLIHAT DALAM 1 VIEWPORT
+   Berlaku untuk desktop, tablet, HP portrait & landscape
+   ========================================================= */
+
+.hero {
+  min-height: calc(100dvh - 40px);
+  height: calc(100dvh - 40px);
+}
+
+/* =========================================================
+   FOOTER SOSMED - COMPACT
+   ========================================================= */
+
+.site-footer {
+  width: 100%;
+  height: 44px;
+  padding: 4px 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+}
+
+.footer-inner {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.footer-social {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.footer-social-item {
+  flex: 1 1 0;
+
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  white-space: nowrap;
+}
+
+.footer-social-item img {
+  flex: 0 0 auto;
+
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+}
+
+.footer-social-item span {
+  min-width: 0;
+
+  font-size: clamp(8px, 1.1vw, 12px);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

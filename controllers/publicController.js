@@ -141,8 +141,26 @@ async function home(req, res, next) {
         getFooter(),
       ]);
 
+    //res.render('public/home', {
+    //  background: backgrounds[0] || null,
+    //  banners: banners || [],
+    //  title,
+    //  subtitle,
+    //  articles: articles || [],
+    //  sosmed: sosmed || [],
+    //  footer,
+    //});
+
     res.render('public/home', {
-      background: backgrounds[0] || null,
+      backgroundWide:
+        backgrounds.find((item) => item.slug === 'background-wide') || null,
+
+      backgroundSquare:
+        backgrounds.find((item) => item.slug === 'background-square') || null,
+
+      backgroundMobile:
+        backgrounds.find((item) => item.slug === 'background-mobile') || null,
+
       banners: banners || [],
       title,
       subtitle,

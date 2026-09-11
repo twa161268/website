@@ -1,5 +1,12 @@
 <%- include('../partials/header', { pageTitle: title?.isi || 'Website', footer }) %>
-<section class="hero" id="homeHero" data-background="<%= background?.gambar || '' %>">
+
+<section
+  class="hero"
+  id="homeHero"
+  data-background-wide="<%= backgroundWide?.gambar || '' %>"
+  data-background-square="<%= backgroundSquare?.gambar || '' %>"
+  data-background-mobile="<%= backgroundMobile?.gambar || '' %>"
+>
 
 
   <div class="hero-video-effect" aria-hidden="true">
@@ -13,69 +20,48 @@
 
   <div class="hero-overlay"></div>
 
-<!--
+
+<% if (false) { %>
+
   <div class="hero-sosmed">
 
-  <% sosmed.forEach(item => { %>
+    <% sosmed.forEach(item => { %>
 
-    <div class="sosmed-item">
+      <%
+        let url = item.isi;
 
-      <img
-        src="<%= item.gambar %>"
-        alt="<%= item.judul %>"
+        if (item.judul === 'WHATSAPP') {
+          url = /^https?:\/\//i.test(item.isi)
+            ? item.isi
+            : 'https://wa.me/' + item.isi.replace(/\D/g, '');
+        } else if (!/^https?:\/\//i.test(item.isi)) {
+          url = 'https://' + item.isi;
+        }
+      %>
+
+      <a
+        href="<%= url %>"
+        target="_blank"
+        rel="noopener"
+        class="sosmed-item"
       >
 
-      <span>
-        <%= item.isi %>
-      </span>
+        <img
+          src="<%= item.gambar %>"
+          alt="<%= item.judul %>"
+        >
 
-    </div>
+        <span>
+          <%= item.isi %>
+        </span>
 
-  <% }) %>
+      </a>
 
-</div>
--->
+    <% }) %>
 
-<div class="hero-sosmed">
+  </div>
 
-  <% sosmed.forEach(item => { %>
-
-    <%
-      let url = item.isi;
-
-      if (item.judul === 'WHATSAPP') {
-        url = /^https?:\/\//i.test(item.isi)
-          ? item.isi
-          : 'https://wa.me/' + item.isi.replace(/\D/g, '');
-      } else if (!/^https?:\/\//i.test(item.isi)) {
-        url = 'https://' + item.isi;
-      }
-    %>
-
-    <a
-      href="<%= url %>"
-      target="_blank"
-      rel="noopener"
-      class="sosmed-item"
-    >
-
-      <img
-        src="<%= item.gambar %>"
-        alt="<%= item.judul %>"
-      >
-
-      <span>
-        <%= item.isi %>
-      </span>
-
-    </a>
-
-  <% }) %>
-
-</div>
-
-
-
+<% } %>
 
 
 
