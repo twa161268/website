@@ -7,14 +7,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobile = hero.dataset.backgroundMobile;
 
     function setHeroBackground() {
-      const ratio = window.innerWidth / window.innerHeight;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const ratio = width / height;
 
       let background = wide;
 
-      if (ratio <= 1) {
+      // HP portrait
+      if (width <= 600 && height > width) {
         background = mobile || square || wide;
-      } else if (ratio <= 1.5) {
+
+        // TABLET portrait
+      } else if (width <= 1200 && height > width) {
         background = square || wide;
+
+        // Rasio 5:4 atau mendekati 5:4
+      } else if (ratio >= 1.15 && ratio <= 1.35) {
+        background = square || wide;
+
+        // Landscape / desktop
+      } else {
+        background = wide;
       }
 
       if (background) {
