@@ -386,16 +386,13 @@ a {
 
 .article-card {
   background: #c5c5c5;
-
   border-radius: 22px;
-
   padding: 12px;
-
   min-width: 0;
-
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .article-card img,
@@ -403,7 +400,7 @@ a {
   display: block;
 
   width: 100%;
-  height: 150px;
+  height: 200px;
 
   object-fit: cover;
 }
@@ -429,9 +426,8 @@ a {
 
 .article-card p {
   font-size: 15px;
-
+  flex: 1;
   line-height: 1.45;
-
   margin: 0;
 }
 
@@ -1218,13 +1214,13 @@ a {
   }
 
   .article-card {
-    padding: 9px;
+    padding: 12px;
     border-radius: 18px;
   }
 
   .article-card img,
   .image-placeholder {
-    height: 95px;
+    height: 130px;
   }
 
   .article-card h2 {
@@ -1349,12 +1345,12 @@ a {
   }
 
   .article-card {
-    padding: 5px;
+    padding: 12px;
   }
 
   .article-card img,
   .image-placeholder {
-    height: clamp(85px, 13vh, 105px);
+    height: clamp(130px, 13vh, 400px);
   }
 
   .article-card h2 {
@@ -1364,7 +1360,7 @@ a {
   }
 
   .article-card p {
-    font-size: clamp(7px, 1vw, 10px);
+    font-size: clamp(12px, 1vw, 15px);
 
     line-height: 1.15;
   }
@@ -1514,7 +1510,7 @@ a {
   .article-card img,
   .article-card .image-placeholder {
     width: 100%;
-    height: 150px;
+    height: 130px;
     object-fit: cover;
   }
 
@@ -1690,7 +1686,7 @@ a {
 
   .hero-title p,
   .hero-text p {
-    font-size: clamp(10px, 1.5vw, 14px);
+    font-size: clamp(8px, 1.5vw, 14px);
 
     line-height: 1.25;
   }
@@ -1736,13 +1732,13 @@ a {
   }
 
   .article-card {
-    padding: clamp(5px, 0.8vw, 9px);
+    padding: clamp(7px, 0.8vw, 10px);
     border-radius: clamp(10px, 1.5vw, 16px);
   }
 
   .article-card img,
   .image-placeholder {
-    height: clamp(55px, 16vh, 95px);
+    height: clamp(55px, 16vh, 130px);
   }
 
   .article-card h2 {
@@ -1752,7 +1748,7 @@ a {
   }
 
   .article-card p {
-    font-size: clamp(8px, 1.1vw, 12px);
+    font-size: clamp(5px, 1.1vw, 12px);
 
     line-height: 1.2;
   }
@@ -1906,17 +1902,17 @@ a {
     width: 60%;
 
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    height: clamp(145px, 13vh, 155px);
+    height: clamp(130px, 13vh, 155px);
     gap: clamp(6px, 1vw, 10px);
   }
 
   .article-card {
-    padding: 5px;
+    padding: 7px;
   }
 
   .article-card img,
   .image-placeholder {
-    height: clamp(45px, 13vh, 65px);
+    height: clamp(55px, 13vh, 70px);
   }
 
   .article-card h2 {
@@ -1926,7 +1922,7 @@ a {
   }
 
   .article-card p {
-    font-size: clamp(7px, 1vw, 10px);
+    font-size: clamp(8px, 1vw, 10px);
 
     line-height: 1.15;
   }
