@@ -10,6 +10,21 @@
     Info Vearich…
   </h1>
 
+    <form class="article-search" method="GET" action="/artikel">
+      <input
+        type="search"
+        name="q"
+        value="<%= q || '' %>"
+        placeholder="Cari artikel..."
+        autocomplete="off"
+      >
+
+      <button type="submit">
+        Cari
+      </button>
+    </form>
+
+
   <div class="article-cards article-list-grid">
 
     <% articles.forEach(article => { %>

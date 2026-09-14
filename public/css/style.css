@@ -323,6 +323,22 @@ a {
   object-fit: initial;
 }
 
+.home-banner.banner-3 video,
+.home-banner.banner-4 video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 346 / 367;
+  object-fit: fill;
+
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
 /* =========================================================
    BANNER 1
    ========================================================= */
@@ -349,8 +365,8 @@ a {
 
 .home-banner.banner-3 {
   left: 2%;
-  bottom: 3%;
-  width: 18%;
+  bottom: 8%;
+  width: 15%;
 }
 
 /* =========================================================
@@ -358,9 +374,9 @@ a {
    ========================================================= */
 
 .home-banner.banner-4 {
-  left: 20%;
-  bottom: 3%;
-  width: 18%;
+  left: 18%;
+  bottom: 8%;
+  width: 15%;
 }
 
 /* =========================================================
@@ -605,12 +621,11 @@ a {
   padding: 16px;
 }
 
-.media-card img {
+.media-card img,
+.media-card video {
   width: 100%;
   height: 180px;
-
   object-fit: cover;
-
   border-radius: 12px;
 }
 
@@ -697,6 +712,22 @@ a {
 
   max-width: 95vw;
   max-height: 90vh;
+
+  object-fit: contain;
+
+  border-radius: 4px;
+
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+.product-lightbox video {
+  display: none;
+
+  max-width: 95vw;
+  max-height: 90vh;
+
+  width: auto;
+  height: auto;
 
   object-fit: contain;
 
@@ -850,6 +881,72 @@ a {
   margin-bottom: 25px;
 }
 
+/* =========================================================
+   ARTICLE SEARCH
+   ========================================================= */
+
+.article-search {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.article-search input {
+  width: 280px;
+  height: 42px;
+
+  padding: 0 15px;
+
+  border: 1px solid #ddd;
+  border-radius: 22px;
+
+  background: #fff;
+  color: #333;
+
+  font-size: 14px;
+
+  outline: none;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+
+  transition: all 0.2s ease;
+}
+
+.article-search input:focus {
+  border-color: #999;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.article-search input::placeholder {
+  color: #999;
+}
+
+.article-search button {
+  height: 42px;
+
+  padding: 0 18px;
+
+  border: 0;
+  border-radius: 22px;
+
+  background: #222;
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.article-search button:hover {
+  background: #444;
+  transform: translateY(-1px);
+}
+
 .article-detail {
   max-width: 1000px;
 }
@@ -882,6 +979,40 @@ a {
   background: #eee;
 
   border-radius: 12px;
+}
+
+/* =========================================================
+   PRODUCT SEARCH
+   ========================================================= */
+
+.product-search {
+  margin-top: -8px;
+  margin-bottom: 22px;
+}
+
+.product-search input {
+  width: 280px;
+}
+
+.product-search button {
+  min-width: 70px;
+}
+
+/* =========================================================
+   GALLERY SEARCH
+   ========================================================= */
+
+.gallery-search {
+  margin-top: -8px;
+  margin-bottom: 22px;
+}
+
+.gallery-search input {
+  width: 280px;
+}
+
+.gallery-search button {
+  min-width: 70px;
 }
 
 /* =========================================================
@@ -1196,12 +1327,12 @@ a {
 
   .home-banner.banner-3 {
     left: 2%;
-    width: 16%;
+    width: 15%;
   }
 
   .home-banner.banner-4 {
     left: 19%;
-    width: 16%;
+    width: 15%;
   }
   /* ARTICLES */
   .article-cards {
@@ -1324,13 +1455,15 @@ a {
   }
 
   .home-banner.banner-3 {
-    bottom: 3%;
-    width: 17%;
+    left: 2%;
+    bottom: 12%;
+    width: 15%;
   }
 
   .home-banner.banner-4 {
-    bottom: 3%;
-    width: 17%;
+    left: 19%;
+    bottom: 12%;
+    width: 15%;
   }
 
   .article-cards {
@@ -1922,15 +2055,15 @@ a {
   /* BANNER3 */
   .home-banner.banner-3 {
     left: 2%;
-    bottom: 4%;
-    width: 17%;
+    bottom: 7%;
+    width: 15%;
   }
 
   /* BANNER4 */
   .home-banner.banner-4 {
-    left: 20%;
-    bottom: 4%;
-    width: 17%;
+    left: 18%;
+    bottom: 7%;
+    width: 15%;
   }
 
   /* ARTICLES */
@@ -2101,13 +2234,15 @@ a {
   }
 
   .home-banner.banner-3 {
-    bottom: 3%;
-    width: 17%;
+    left: 3%;
+    bottom: 4%;
+    width: 14%;
   }
 
   .home-banner.banner-4 {
-    bottom: 3%;
-    width: 17%;
+    left: 18%;
+    bottom: 4%;
+    width: 14%;
   }
 
   .article-cards {

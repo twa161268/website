@@ -1,36 +1,49 @@
-<%- include('../partials/header', { pageTitle: 'Product', footer }) %>
+<%- include('../partials/header', { pageTitle: 'Product' , footer }) %>
 
-<section class="content-page">
-  <h1>Product</h1>
+  <section class="content-page">
+    <h1>Product</h1>
 
-  <div class="media-grid product-grid">
-    <% items.forEach(item => { %>
+    <form class="article-search product-search" method="GET" action="/product">
+      <input type="search" name="q" value="<%= q || '' %>" placeholder="Cari product..." autocomplete="off">
 
-      <article class="media-card">
+      <button type="submit">
+        Cari
+      </button>
 
-        <% if (/\.pdf$/i.test(item.gambar || '')) { %>
+    </form>
+    <div class="media-grid product-grid">
+      <% items.forEach(item=> { %>
 
-          <div class="pdf-box">PDF</div>
+        <article class="media-card">
 
-        <% } else if (item.gambar) { %>
+          <% const url=item.gambar || '' ; const isPdf=/\.pdf$/i.test(url); const
+            isVideo=/\.(mp4|webm|ogg|mov|m4v)$/i.test(url); %>
 
-          <img
-            src="<%= item.gambar %>"
-            alt="<%= item.judul %>"
-            class="product-image"
-            data-full-image="<%= item.gambar %>"
-            data-title="<%= item.judul %>"
-          >
+            <% if (isPdf) { %>
 
-        <% } %>
+              <div class="pdf-box">PDF</div>
 
-        <h2><%= item.judul %></h2>
+              <% } else if (isVideo) { %>
 
-      </article>
+                <video class="product-image" src="<%= url %>" controls muted playsinline preload="metadata">
+                </video>
 
-    <% }) %>
-  </div>
-</section>
+                <% } else if (url) { %>
+
+                  <img src="<%= url %>" alt="<%= item.judul %>" class="product-image" data-full-image="<%= url %>"
+                    data-title="<%= item.judul %>">
+
+                <% } %>
+
+                    <h2>
+                      <%= item.judul %>
+                    </h2>
+
+        </article>
+
+        <% }) %>
+    </div>
+  </section>
 
 
 <!-- LIGHTBOX PRODUCT -->
@@ -51,6 +64,13 @@
     alt=""
   >
 
+  <video
+    id="productLightboxVideo"
+    controls
+    playsinline
+    preload="metadata"
+  ></video>
+
   <div
     class="product-lightbox-title"
     id="productLightboxTitle"
@@ -59,43 +79,106 @@
 </div>
 
 
-<script>
+  <script>
 document.addEventListener('DOMContentLoaded', function () {
 
   const lightbox = document.getElementById('productLightbox');
-  const lightboxImage = document.getElementById('productLightboxImage');
-  const lightboxTitle = document.getElementById('productLightboxTitle');
-  const closeButton = document.getElementById('productLightboxClose');
 
-  document.querySelectorAll('.product-image').forEach(function (image) {
+  const lightboxImage =
+    document.getElementById('productLightboxImage');
 
-    image.addEventListener('click', function () {
+  const lightboxVideo =
+    document.getElementById('productLightboxVideo');
 
-      lightboxImage.src = image.dataset.fullImage;
-      lightboxImage.alt = image.dataset.title || '';
+  const lightboxTitle =
+    document.getElementById('productLightboxTitle');
 
-      lightboxTitle.textContent = image.dataset.title || '';
+  const closeButton =
+    document.getElementById('productLightboxClose');
+
+
+  /*
+   * IMAGE
+   */
+  document.querySelectorAll('.product-image').forEach(function (media) {
+
+    media.addEventListener('click', function () {
+
+      const url = media.dataset.fullImage || media.src;
+      const title = media.dataset.title || '';
+
+      /*
+       * Kalau yang diklik adalah VIDEO
+       */
+      if (media.tagName === 'VIDEO') {
+
+        lightboxImage.style.display = 'none';
+
+        lightboxVideo.style.display = 'block';
+        lightboxVideo.src = media.currentSrc || media.src;
+
+        lightboxTitle.textContent = title;
+
+        lightbox.classList.add('open');
+
+        document.body.style.overflow = 'hidden';
+
+        lightboxVideo.play().catch(function () {
+          // Browser bisa menolak autoplay.
+          // User tetap bisa menekan tombol Play.
+        });
+
+        return;
+      }
+
+
+      /*
+       * Kalau yang diklik adalah GAMBAR
+       */
+      lightboxVideo.pause();
+      lightboxVideo.removeAttribute('src');
+      lightboxVideo.load();
+      lightboxVideo.style.display = 'none';
+
+      lightboxImage.src = url;
+      lightboxImage.alt = title;
+      lightboxImage.style.display = 'block';
+
+      lightboxTitle.textContent = title;
 
       lightbox.classList.add('open');
 
       document.body.style.overflow = 'hidden';
+
     });
 
   });
 
 
+  /*
+   * CLOSE LIGHTBOX
+   */
   function closeLightbox() {
+
     lightbox.classList.remove('open');
 
     lightboxImage.src = '';
 
+    lightboxVideo.pause();
+    lightboxVideo.removeAttribute('src');
+    lightboxVideo.load();
+
     document.body.style.overflow = '';
+
   }
 
 
   closeButton.addEventListener('click', closeLightbox);
 
 
+  /*
+   * CLICK DI LUAR MEDIA
+   */
   lightbox.addEventListener('click', function (event) {
 
     if (event.target === lightbox) {
@@ -105,6 +188,9 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 
+  /*
+   * ESCAPE
+   */
   document.addEventListener('keydown', function (event) {
 
     if (event.key === 'Escape') {
@@ -117,4 +203,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<%- include('../partials/footer', { footer }) %>
+  <%- include('../partials/footer', { footer }) %>

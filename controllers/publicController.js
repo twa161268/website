@@ -243,6 +243,45 @@ async function about(req, res, next) {
 
 async function product(req, res, next) {
   try {
+    const q = (req.query.q || '').trim();
+
+    let sql = `
+      SELECT *
+      FROM gambar
+      WHERE kategori = 'PRODUK'
+        AND status = '1'
+    `;
+
+    const params = [];
+
+    // Jika ada kata kunci pencarian
+    if (q) {
+      params.push(`%${q}%`);
+
+      sql += `
+        AND judul ILIKE $1
+      `;
+    }
+
+    sql += `
+      ORDER BY created_at DESC
+    `;
+
+    const items = await db.query(sql, params);
+
+    res.render('public/product', {
+      items,
+      q,
+      footer: await getFooter(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/*
+async function product(req, res, next) {
+  try {
     const items = await db.query(
       "SELECT * FROM gambar WHERE kategori = 'PRODUK' AND status = '1' ORDER BY created_at DESC"
     );
@@ -252,6 +291,7 @@ async function product(req, res, next) {
     next(err);
   }
 }
+*/
 
 async function form(req, res, next) {
   try {
@@ -266,6 +306,45 @@ async function form(req, res, next) {
 
 async function gallery(req, res, next) {
   try {
+    const q = (req.query.q || '').trim();
+
+    let sql = `
+      SELECT *
+      FROM gambar
+      WHERE kategori = 'GALLERY'
+        AND status = '1'
+    `;
+
+    const params = [];
+
+    // Jika ada kata kunci pencarian
+    if (q) {
+      params.push(`%${q}%`);
+
+      sql += `
+        AND judul ILIKE $1
+      `;
+    }
+
+    sql += `
+      ORDER BY created_at DESC
+    `;
+
+    const items = await db.query(sql, params);
+
+    res.render('public/gallery', {
+      items,
+      q,
+      footer: await getFooter(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/*
+async function gallery(req, res, next) {
+  try {
     const items = await db.query(
       "SELECT * FROM gambar WHERE kategori = 'GALLERY' AND status = '1' ORDER BY created_at DESC"
     );
@@ -275,7 +354,84 @@ async function gallery(req, res, next) {
     next(err);
   }
 }
+*/
 
+
+async function artikel(req, res, next) {
+  try {
+    const q = (req.query.q || '').trim();
+
+    let sql = `
+      SELECT
+        a.*,
+
+        -- Ambil gambar pertama sebagai thumbnail
+        (
+          SELECT ak.media_url
+          FROM artikel_konten ak
+          WHERE ak.artikel_id = a.id
+            AND ak.tipe = 'GAMBAR'
+            AND ak.media_url IS NOT NULL
+          ORDER BY ak.urutan ASC, ak.id ASC
+          LIMIT 1
+        ) AS thumbnail,
+
+        -- Ambil block TEKS pertama sebagai overview
+        (
+          SELECT ak.isi
+          FROM artikel_konten ak
+          WHERE ak.artikel_id = a.id
+            AND ak.tipe = 'TEKS'
+            AND ak.isi IS NOT NULL
+            AND TRIM(ak.isi) <> ''
+          ORDER BY ak.urutan ASC, ak.id ASC
+          LIMIT 1
+        ) AS overview
+
+      FROM artikel a
+
+      WHERE a.status = '1'
+    `;
+
+    const params = [];
+
+    // Jika ada kata kunci pencarian
+    if (q) {
+      params.push(`%${q}%`);
+
+      sql += `
+        AND (
+          a.judul ILIKE $1
+          OR EXISTS (
+            SELECT 1
+            FROM artikel_konten ak
+            WHERE ak.artikel_id = a.id
+              AND ak.tipe = 'TEKS'
+              AND ak.isi ILIKE $1
+          )
+        )
+      `;
+    }
+
+    sql += `
+      ORDER BY
+        a.statuspin DESC,
+        a.created_at DESC
+    `;
+
+    const articles = await db.query(sql, params);
+
+    res.render('public/artikel', {
+      articles,
+      q,
+      footer: await getFooter(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/*
 async function artikel(req, res, next) {
   try {
     const articles = await db.query(
@@ -324,6 +480,7 @@ async function artikel(req, res, next) {
     next(err);
   }
 }
+*/
 
 async function detailArtikel(req, res, next) {
   try {

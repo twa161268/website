@@ -11,7 +11,16 @@ const router = express.Router();
 // Upload ke memory, bukan ke public/uploads
 const storage = multer.memoryStorage();
 
-const allowed = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+const allowed = [
+  'image/jpeg',
+  'image/png',
+  'image/jpg',
+  'video/mp4',
+  'video/webm',
+  'video/ogg',
+  'video/quicktime',
+  'application/pdf',
+];
 
 const upload = multer({
   storage,
@@ -21,7 +30,11 @@ const upload = multer({
   fileFilter: (req, file, cb) =>
     allowed.includes(file.mimetype)
       ? cb(null, true)
-      : cb(new Error('File tidak didukung. Hanya JPG, JPEG, PNG, dan PDF.')),
+      : cb(
+          new Error(
+            'File tidak didukung. Gunakan JPG, JPEG, PNG, MP4, WEBM, MOV, atau PDF.'
+          )
+        ),
 });
 
 router.get('/', requireLogin, c.index);
