@@ -421,9 +421,16 @@ async function detail(req, res, next) {
 
 async function showEdit(req, res, next) {
   try {
-    const rows = await db.query('SELECT * FROM artikel WHERE id = $1', [
-      req.params.id,
-    ]);
+    const rows = await db.query(
+      `SELECT *,
+          to_char(
+            created_at,
+            'YYYY-MM-DD"T"HH24:MI'
+          ) AS created_at_input
+   FROM artikel
+   WHERE id = $1`,
+      [req.params.id]
+    );
 
     if (!rows[0]) {
       return res.status(404).render('error', {
@@ -431,7 +438,6 @@ async function showEdit(req, res, next) {
         message: 'Artikel tidak ditemukan.',
       });
     }
-
 
     const contents = await db.query(
       `SELECT *
@@ -510,6 +516,12 @@ async function update(req, res, next) {
 
     const status = req.body.status === '1' ? '1' : '0';
     const statuspin = req.body.statuspin === '1' ? '1' : '0';
+
+    const createdAt = String(req.body.created_at || '').trim();
+
+    if (!createdAt) {
+      throw new Error('Created At wajib diisi.');
+    }
 
     // =====================================================
     // PARSE CONTENT DATA
@@ -691,14 +703,15 @@ async function update(req, res, next) {
 
     await client.query(
       `UPDATE artikel
-       SET judul = $1,
-           slug = $2,
-           isi = $3,
-           status = $4,
-           statuspin = $5,
-           updated_at = NOW()
-       WHERE id = $6`,
-      [judul, slug, '', status, statuspin, id]
+   SET judul = $1,
+       slug = $2,
+       isi = $3,
+       status = $4,
+       statuspin = $5,
+       created_at = $6,
+       updated_at = NOW()
+   WHERE id = $7`,
+      [judul, slug, '', status, statuspin, createdAt, id]
     );
 
     // =====================================================
@@ -753,7 +766,6 @@ async function update(req, res, next) {
          VALUES ($1,$2,$3,$4,$5,NOW())`,
         [id, content.tipe, isi, mediaUrl, i + 1]
       );
-
     }
 
     // =====================================================
@@ -843,10 +855,9 @@ async function remove(req, res, next) {
       });
     }
 
-    const article = await db.query(
-      'SELECT id FROM artikel WHERE id = $1',
-      [articleId]
-    );
+    const article = await db.query('SELECT id FROM artikel WHERE id = $1', [
+      articleId,
+    ]);
 
     if (!article[0]) {
       return res.status(404).render('error', {

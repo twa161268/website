@@ -206,6 +206,11 @@
               <input type="text" name="slug" value="<%= article.slug || '' %>">
             </label>
 
+            <label>
+              Created At
+              <input type="datetime-local" name="created_at" value="<%= article.created_at_input || '' %>">
+            </label>
+
 
             <div class="form-row">
 
@@ -343,12 +348,8 @@
                         <label>
                           Ganti gambar
 
-                          <input
-                            type="file"
-                            class="content-media-input"
-                            name="content_media_<%= content.id %>"
-                            accept="image/jpeg,image/png,image/jpg"
-                          >
+                          <input type="file" class="content-media-input" name="content_media_<%= content.id %>"
+                            accept="image/jpeg,image/png,image/jpg">
                         </label>
 
                         <div class="media-preview"></div>
@@ -379,12 +380,8 @@
                           <label>
                             Ganti video
 
-                            <input
-                              type="file"
-                              class="content-media-input"
-                              name="content_media_<%= content.id %>"
-                              accept="video/mp4,video/webm,video/ogg"
-                            >
+                            <input type="file" class="content-media-input" name="content_media_<%= content.id %>"
+                              accept="video/mp4,video/webm,video/ogg">
                           </label>
 
                           <div class="media-preview"></div>
