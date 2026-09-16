@@ -53,8 +53,8 @@ a {
 .social-links a,
 .public-nav a {
   /*color: #111;*/
-  color: #ffffff;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+  color: #000000;
+  text-shadow: 1px 1px 4px rgb(250, 249, 249);
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
