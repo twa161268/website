@@ -11,11 +11,12 @@
 
     <div class="home-hero-shade" aria-hidden="true"></div>
 
+<!--
     <div class="home-hero-copy">
       <h1><%= title?.isi || '' %></h1>
       <p><%= subtitle?.isi || '' %></p>
     </div>
-
+  -->
     <% [3, 4].forEach((number) => { const banner = banners.find((item) => item.judul === `BANNER${number}`); if (banner) { const url = banner.gambar || ''; const isVideo = /\.(mp4|webm|ogg|mov|m4v)$/i.test(url); %>
       <% if (banner.artikel_slug) { %>
         <a class="screen1-banner screen1-banner-<%= number %>" href="/artikel/<%= banner.artikel_slug %>" aria-label="Buka artikel: <%= banner.artikel_judul || banner.judul %>">
@@ -49,10 +50,15 @@
 <!-- SCREEN 2: ABOUT, VISI/MISI, ARTICLES, FOOTER -->
 <section class="home-screen2" aria-label="Informasi dan artikel">
   <section class="home-about-section" id="about">
-    <div class="home-section-heading"><span>WHO WE ARE</span><h2>About Us</h2></div>
-    <% if (aboutSections && aboutSections.length) { %>
+    <div class="home-section-heading"><span></span><h2>Tentang kami</h2></div>
+    <%
+      const aboutMainSections = (aboutSections || []).filter(
+        (section) => section.judul === 'ABOUT' || section.judul === 'ABOUT2'
+      );
+    %>
+    <% if (aboutMainSections.length) { %>
       <div class="home-about-grid">
-        <% aboutSections.forEach((section) => { %>
+        <% aboutMainSections.forEach((section) => { %>
           <article class="home-about-item">
             <% if (section.image?.gambar) { %><img src="<%= section.image.gambar %>" alt="<%= section.judul %>"><% } %>
             <% if (section.content?.isi) { %><div class="home-about-copy"><%- section.content.isi %></div><% } %>
@@ -62,9 +68,34 @@
     <% } %>
   </section>
 
+  <%
+    const visiSection = (aboutSections || []).find((section) => section.judul === 'ABOUT3');
+    const misiSection = (aboutSections || []).find((section) => section.judul === 'ABOUT4');
+  %>
   <section class="home-vision-section" aria-label="Visi dan Misi">
-    <div class="home-vision-card"><h2>Visi</h2></div>
-    <div class="home-vision-card"><h2>Misi</h2></div>
+    <article class="home-vision-card">
+      <% if (visiSection?.image?.gambar) { %>
+        <img class="home-vision-image" src="<%= visiSection.image.gambar %>" alt="Visi" loading="lazy">
+      <% } %>
+      <div class="home-vision-content">
+        <h2>VISI</h2>
+        <% if (visiSection?.content?.isi) { %>
+          <div class="home-vision-text"><%- visiSection.content.isi %></div>
+        <% } %>
+      </div>
+    </article>
+
+    <article class="home-vision-card">
+      <% if (misiSection?.image?.gambar) { %>
+        <img class="home-vision-image" src="<%= misiSection.image.gambar %>" alt="Misi" loading="lazy">
+      <% } %>
+      <div class="home-vision-content">
+        <h2>MISI</h2>
+        <% if (misiSection?.content?.isi) { %>
+          <div class="home-vision-text"><%- misiSection.content.isi %></div>
+        <% } %>
+      </div>
+    </article>
   </section>
 
   <section class="home-articles-section" id="articles">
