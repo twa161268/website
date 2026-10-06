@@ -21,7 +21,7 @@
 
     <button class="mobile-menu-button" type="button" data-mobile-menu aria-label="Buka menu">☰</button>
     <nav class="public-nav" data-public-menu>
-      <a href="/about">About</a><a href="/product">Product</a><a href="/form">Form</a><a href="/gallery">Gallery</a>
+      <a href="<%= (typeof currentPage !== 'undefined' && currentPage === 'home') ? '#about' : '/about' %>">About</a><a href="/product">Product</a><a href="/form">Form</a><a href="/gallery">Gallery</a>
       <% if (currentUser) { %><a href="/admin"><%= currentUser %></a><a href="/logout">Logout</a><% } else { %><a href="/login">User Login</a><% } %>
     </nav>
   </div>

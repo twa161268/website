@@ -68,104 +68,99 @@ async function getFooter() {
 
 async function home(req, res, next) {
   try {
-    const [backgrounds, banners, title, subtitle, articles, sosmed, footer] =
+    const [backgrounds, banners, title, subtitle, articles, aboutTexts, aboutImages, footer] =
       await Promise.all([
         db.query(`
-        SELECT *
-        FROM gambar
-        WHERE kategori = 'BACK'
-          AND status = '1'
-        ORDER BY statuspin DESC, created_at DESC
-      `),
-
+          SELECT *
+          FROM gambar
+          WHERE kategori = 'BACK'
+            AND status = '1'
+          ORDER BY statuspin DESC, created_at DESC
+        `),
         db.query(`
-      SELECT
-        g.*,
-        CASE
-          WHEN a.status = '1' THEN a.slug
-          ELSE NULL
-        END AS artikel_slug,
-        CASE
-          WHEN a.status = '1' THEN a.judul
-          ELSE NULL
-        END AS artikel_judul
-      FROM gambar g
-      LEFT JOIN artikel a ON a.id = g.artikel_id
-      WHERE g.kategori = 'BANNER'
-        AND g.status = '1'
-        AND g.judul IN ('BANNER1', 'BANNER2', 'BANNER3', 'BANNER4')
-      ORDER BY
-        CASE g.judul
-          WHEN 'BANNER1' THEN 1
-          WHEN 'BANNER2' THEN 2
-          WHEN 'BANNER3' THEN 3
-          WHEN 'BANNER4' THEN 4
-          ELSE 99
-        END
-      `),
-
+          SELECT
+            g.*,
+            CASE WHEN a.status = '1' THEN a.slug ELSE NULL END AS artikel_slug,
+            CASE WHEN a.status = '1' THEN a.judul ELSE NULL END AS artikel_judul
+          FROM gambar g
+          LEFT JOIN artikel a ON a.id = g.artikel_id
+          WHERE g.kategori = 'BANNER'
+            AND g.status = '1'
+            AND g.judul IN ('BANNER1', 'BANNER2', 'BANNER3', 'BANNER4')
+          ORDER BY CASE g.judul
+            WHEN 'BANNER1' THEN 1
+            WHEN 'BANNER2' THEN 2
+            WHEN 'BANNER3' THEN 3
+            WHEN 'BANNER4' THEN 4
+            ELSE 99
+          END
+        `),
         getTulisanByJudul('TITLE'),
-
         getTulisanByJudul('SUBTITLE'),
-
         db.query(`
-        SELECT
-          a.*,
-          (
-            SELECT ak.media_url
-            FROM artikel_konten ak
-            WHERE ak.artikel_id = a.id
-              AND ak.tipe = 'GAMBAR'
-              AND ak.media_url IS NOT NULL
-            ORDER BY ak.urutan ASC, ak.id ASC
-            LIMIT 1
-          ) AS thumbnail,
-          (
-            SELECT ak.isi
-            FROM artikel_konten ak
-            WHERE ak.artikel_id = a.id
-              AND ak.tipe = 'TEKS'
-              AND ak.isi IS NOT NULL
-              AND TRIM(ak.isi) <> ''
-            ORDER BY ak.urutan ASC, ak.id ASC
-            LIMIT 1
-          ) AS overview
-        FROM artikel a
-        WHERE a.status = '1'
-        ORDER BY a.statuspin DESC, a.created_at DESC
-        LIMIT 3
-      `),
-
-        getSosmed(),
-
+          SELECT
+            a.*,
+            (SELECT ak.media_url
+             FROM artikel_konten ak
+             WHERE ak.artikel_id = a.id
+               AND ak.tipe = 'GAMBAR'
+               AND ak.media_url IS NOT NULL
+             ORDER BY ak.urutan ASC, ak.id ASC
+             LIMIT 1) AS thumbnail,
+            (SELECT ak.isi
+             FROM artikel_konten ak
+             WHERE ak.artikel_id = a.id
+               AND ak.tipe = 'TEKS'
+               AND ak.isi IS NOT NULL
+               AND TRIM(ak.isi) <> ''
+             ORDER BY ak.urutan ASC, ak.id ASC
+             LIMIT 1) AS overview
+          FROM artikel a
+          WHERE a.status = '1'
+          ORDER BY a.statuspin DESC, a.created_at DESC
+          LIMIT 4
+        `),
+        db.query(`
+          SELECT judul, isi
+          FROM tulisan
+          WHERE status = '1'
+            AND judul ~ '^ABOUT[0-9]*$'
+        `),
+        db.query(`
+          SELECT judul, gambar
+          FROM gambar
+          WHERE kategori = 'ABOUT'
+            AND status = '1'
+            AND judul ~ '^ABOUT[0-9]*$'
+        `),
         getFooter(),
       ]);
 
-    //res.render('public/home', {
-    //  background: backgrounds[0] || null,
-    //  banners: banners || [],
-    //  title,
-    //  subtitle,
-    //  articles: articles || [],
-    //  sosmed: sosmed || [],
-    //  footer,
-    //});
+    const textMap = Object.fromEntries(aboutTexts.map((row) => [row.judul, row]));
+    const imageMap = Object.fromEntries(aboutImages.map((row) => [row.judul, row]));
+    const aboutTitles = [...new Set([
+      ...aboutTexts.map((row) => row.judul),
+      ...aboutImages.map((row) => row.judul),
+    ])].sort((a, b) => {
+      const numberOf = (value) => value === 'ABOUT' ? 1 : Number(value.replace('ABOUT', ''));
+      return numberOf(a) - numberOf(b);
+    });
+    const aboutSections = aboutTitles.map((judul) => ({
+      judul,
+      content: textMap[judul] || null,
+      image: imageMap[judul] || null,
+    }));
 
     res.render('public/home', {
-      backgroundWide:
-        backgrounds.find((item) => item.slug === 'background-wide') || null,
-
-      backgroundSquare:
-        backgrounds.find((item) => item.slug === 'background-square') || null,
-
-      backgroundMobile:
-        backgrounds.find((item) => item.slug === 'background-mobile') || null,
-
+      currentPage: 'home',
+      backgroundWide: backgrounds.find((item) => item.slug === 'background-wide') || backgrounds[0] || null,
+      backgroundSquare: backgrounds.find((item) => item.slug === 'background-square') || null,
+      backgroundMobile: backgrounds.find((item) => item.slug === 'background-mobile') || null,
       banners: banners || [],
       title,
       subtitle,
       articles: articles || [],
-      sosmed: sosmed || [],
+      aboutSections,
       footer,
     });
   } catch (err) {

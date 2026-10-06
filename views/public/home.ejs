@@ -1,154 +1,98 @@
-<%- include('../partials/header', { pageTitle: title?.isi || 'Website' , footer }) %>
+<%- include('../partials/header', { pageTitle: title?.isi || 'Website', footer, currentPage: 'home' }) %>
 
-  <section class="hero" id="homeHero" data-background-wide="<%= backgroundWide?.gambar || '' %>"
+<!-- SCREEN 1: HERO + BANNER 1 + BANNER 2 -->
+<section class="home-screen1" aria-label="Halaman utama">
+  <div
+    class="home-hero-stage"
+    id="homeHero"
+    data-background-wide="<%= backgroundWide?.gambar || '' %>"
     data-background-square="<%= backgroundSquare?.gambar || '' %>"
     data-background-mobile="<%= backgroundMobile?.gambar || '' %>">
 
+    <div class="home-hero-shade" aria-hidden="true"></div>
 
-    <div class="hero-video-effect" aria-hidden="true">
-      <video autoplay muted loop playsinline preload="metadata">
-        <source src="/uploads/gambar/videoz.mp4" type="video/mp4">
-      </video>
-    </div>
-
-    <div class="hero-video-fade" aria-hidden="true"></div>
-
-
-    <div class="hero-overlay"></div>
-
-
-    <% if (false) { %>
-
-      <div class="hero-sosmed">
-
-        <% sosmed.forEach(item=> { %>
-
-          <% let url=item.isi; if (item.judul==='WHATSAPP' ) { url=/^https?:\/\//i.test(item.isi) ? item.isi
-            : 'https://wa.me/' + item.isi.replace(/\D/g, '' ); } else if (!/^https?:\/\//i.test(item.isi)) {
-            url='https://' + item.isi; } %>
-
-            <a href="<%= url %>" target="_blank" rel="noopener" class="sosmed-item">
-
-              <img src="<%= item.gambar %>" alt="<%= item.judul %>">
-
-              <span>
-                <%= item.isi %>
-              </span>
-
-            </a>
-
-            <% }) %>
-
-      </div>
-
-      <% } %>
-
-
-
-        <div class="hero-content">
-
-          <!--
-    <div class="hero-text">
+    <div class="home-hero-copy">
       <h1><%= title?.isi || '' %></h1>
       <p><%= subtitle?.isi || '' %></p>
     </div>
-    -->
 
-          <!-- TITLE + SUBTITLE
-    <div class="hero-title">
-    <h1><%= title?.isi || '' %></h1>
-    <p><%= subtitle?.isi || '' %></p>
-    </div>
-  -->
+    <% [3, 4].forEach((number) => { const banner = banners.find((item) => item.judul === `BANNER${number}`); if (banner) { const url = banner.gambar || ''; const isVideo = /\.(mp4|webm|ogg|mov|m4v)$/i.test(url); %>
+      <% if (banner.artikel_slug) { %>
+        <a class="screen1-banner screen1-banner-<%= number %>" href="/artikel/<%= banner.artikel_slug %>" aria-label="Buka artikel: <%= banner.artikel_judul || banner.judul %>">
+      <% } else { %>
+        <div class="screen1-banner screen1-banner-<%= number %>">
+      <% } %>
+          <% if (isVideo) { %>
+            <video src="<%= url %>" autoplay muted loop playsinline preload="metadata"></video>
+          <% } else { %>
+            <img src="<%= url %>" alt="<%= banner.judul %>">
+          <% } %>
+      <% if (banner.artikel_slug) { %></a><% } else { %></div><% } %>
+    <% } }); %>
+  </div>
 
+  <% [1, 2].forEach((number) => { const banner = banners.find((item) => item.judul === `BANNER${number}`); %>
+    <section class="screen1-wide-banner screen1-wide-banner-<%= number %>" aria-label="Banner <%= number %>">
+      <% if (banner) { const url = banner.gambar || ''; const isVideo = /\.(mp4|webm|ogg|mov|m4v)$/i.test(url); %>
+        <% if (banner.artikel_slug) { %><a href="/artikel/<%= banner.artikel_slug %>" aria-label="Buka artikel: <%= banner.artikel_judul || banner.judul %>"><% } %>
+          <% if (isVideo) { %>
+            <video src="<%= url %>" autoplay muted loop playsinline preload="metadata"></video>
+          <% } else if (url) { %>
+            <img src="<%= url %>" alt="<%= banner.judul %>">
+          <% } %>
+        <% if (banner.artikel_slug) { %></a><% } %>
+      <% } %>
+    </section>
+  <% }); %>
+</section>
 
-          <% if (Array.isArray(banners) && banners.length> 0) { %>
-
-            <div class="home-banners">
-
-              <% banners.forEach(banner=> { %>
-
-                <% const bannerUrl=banner.gambar || '' ; const isVideo=/\.(mp4|webm|ogg|mov|m4v)$/i.test(bannerUrl); %>
-
-                  <% if (banner.artikel_slug) { %>
-
-                    <a href="/artikel/<%= banner.artikel_slug %>"
-                      class="home-banner banner-<%= banner.judul.replace('BANNER', '') %>"
-                      aria-label="Buka artikel: <%= banner.artikel_judul || banner.judul %>">
-
-                      <% if (isVideo) { %>
-
-                        <video src="<%= bannerUrl %>" autoplay muted loop playsinline preload="metadata"></video>
-
-                        <% } else { %>
-
-                          <img src="<%= bannerUrl %>" alt="<%= banner.judul %>">
-
-                          <% } %>
-
-                    </a>
-
-                    <% } else { %>
-
-                      <div class="home-banner banner-<%= banner.judul.replace('BANNER', '') %>">
-
-                        <% if (isVideo) { %>
-
-                          <video src="<%= bannerUrl %>" autoplay muted loop playsinline preload="metadata"></video>
-
-                          <% } else { %>
-
-                            <img src="<%= bannerUrl %>" alt="<%= banner.judul %>">
-
-                            <% } %>
-
-                      </div>
-
-                      <% } %>
-
-                        <% }) %>
-
-            </div>
-
-            <% } %>
-
-
-              <!-- ARTIKEL -->
-              <div class="article-cards home-articles">
-                <% articles.forEach(article=> { %>
-                  <article class="article-card">
-                    <a href="/artikel/<%= article.slug %>">
-
-                      <% if (article.thumbnail) { %>
-                        <img src="<%= article.thumbnail %>" alt="<%= article.judul %>">
-                        <% } else { %>
-                          <div class="image-placeholder">No Image</div>
-                          <% } %>
-
-                            <h2>
-                              <%= article.judul %>
-                            </h2>
-                    </a>
-
-                    <% const overviewText=article.overview || '' ; const cleanOverview=String(overviewText)
-                      .replace(/<[^>]*>/g, '')
-                      .replace(/\s+/g, ' ')
-                      .trim();
-                      %>
-
-                      <p>
-                        <%= cleanOverview.slice(0, 120) %>
-                          <%= cleanOverview.length> 120 ? '…' : '' %>
-                      </p>
-                  </article>
-                  <% }) %>
-              </div>
-
-              <!-- MORE ARTICLES -->
-              <div class="more-articles">
-                <a href="/artikel">Info lainnya...</a>
-              </div>
-
-        </div>
+<!-- SCREEN 2: ABOUT, VISI/MISI, ARTICLES, FOOTER -->
+<section class="home-screen2" aria-label="Informasi dan artikel">
+  <section class="home-about-section" id="about">
+    <div class="home-section-heading"><span>WHO WE ARE</span><h2>About Us</h2></div>
+    <% if (aboutSections && aboutSections.length) { %>
+      <div class="home-about-grid">
+        <% aboutSections.forEach((section) => { %>
+          <article class="home-about-item">
+            <% if (section.image?.gambar) { %><img src="<%= section.image.gambar %>" alt="<%= section.judul %>"><% } %>
+            <% if (section.content?.isi) { %><div class="home-about-copy"><%- section.content.isi %></div><% } %>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
   </section>
-  <%- include('../partials/footer', { footer }) %>
+
+  <section class="home-vision-section" aria-label="Visi dan Misi">
+    <div class="home-vision-card"><h2>Visi</h2></div>
+    <div class="home-vision-card"><h2>Misi</h2></div>
+  </section>
+
+  <section class="home-articles-section" id="articles">
+    <div class="home-section-heading home-articles-heading"><span>OUR STORIES</span><h2>Articles</h2></div>
+    <div class="home-article-grid">
+      <% articles.forEach((article) => { %>
+        <article class="home-article-card">
+          <a class="home-article-link" href="/artikel/<%= article.slug %>">
+            <% if (article.thumbnail) { %>
+              <img src="<%= article.thumbnail %>" alt="<%= article.judul %>" loading="lazy">
+            <% } else { %>
+              <div class="home-article-placeholder" aria-label="Tidak ada gambar">Article</div>
+            <% } %>
+            <div class="home-article-text">
+              <h3><%= article.judul %></h3>
+              <% const cleanOverview = String(article.overview || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim(); %>
+              <% if (cleanOverview) { %><p><%= cleanOverview.slice(0, 115) %><%= cleanOverview.length > 115 ? '…' : '' %></p><% } %>
+            </div>
+          </a>
+        </article>
+      <% }); %>
+      <% if (!articles.length) { %><p class="home-no-articles">Belum ada artikel yang dipublikasikan.</p><% } %>
+    </div>
+    <div class="home-more-articles"><a href="/artikel">More articles <span aria-hidden="true">→</span></a></div>
+  </section>
+
+  <%- include('../partials/footer', { footer, insideScreen: true }) %>
+</section>
+</main>
+</body>
+</html>
