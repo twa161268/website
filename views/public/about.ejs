@@ -1,32 +1,38 @@
-<%- include('../partials/header', { pageTitle: 'About', footer }) %>
+<%- include('../partials/header', { pageTitle: 'About Us', footer, currentPage: 'about' }) %>
 
-<section class="content-page narrow-page">
+<section class="about-page content-page" aria-label="About Us, Misi, dan Visi">
+  <header class="about-page-heading">
+    <span>WHO WE ARE</span>
+    <h1>About Us</h1>
+    <p>Mengenal kami, misi, dan visi yang menjadi arah perjalanan kami.</p>
+  </header>
 
-    <h1>About us</h1>
+  <% const sectionMeta = {
+    ABOUT:  { title: 'About Us', label: 'Tentang Kami' },
+    ABOUT2: { title: 'About Us', label: 'Lebih Dekat Dengan Kami' },
+    ABOUT3: { title: 'Misi', label: 'Misi Kami' },
+    ABOUT4: { title: 'Visi', label: 'Visi Kami' }
+  }; %>
+  <% const orderedSections = ['ABOUT', 'ABOUT2', 'ABOUT3', 'ABOUT4'].map(judul => (sections || []).find(section => section.judul === judul)).filter(Boolean); %>
 
-    <% if (sections && sections.length) { %>
-
-        <% sections.forEach(section => { %>
-
-            <% if (section.image) { %>
-                <div class="about-image">
-                    <img
-                        src="<%= section.image.gambar %>"
-                        alt="<%= section.image.judul || 'About' %>"
-                    >
-                </div>
-            <% } %>
-
-            <% if (section.content?.isi) { %>
-                <div class="rich-content">
-                    <%- section.content.isi %>
-                </div>
-            <% } %>
-
-        <% }) %>
-
-    <% } %>
-
+  <% orderedSections.forEach((section) => { const meta = sectionMeta[section.judul] || { title: section.judul, label: section.judul }; %>
+    <article class="about-page-section about-page-section-<%= section.judul.toLowerCase() %>">
+      <% if (section.image && section.image.gambar) { %>
+        <div class="about-page-image">
+          <img src="<%= section.image.gambar %>" alt="<%= meta.title %>" loading="lazy">
+        </div>
+      <% } %>
+      <div class="about-page-copy">
+        <% if (section.judul === 'ABOUT3' || section.judul === 'ABOUT4') { %>
+          <span class="about-page-eyebrow"><%= meta.label %></span>
+          <h2><%= meta.title %></h2>
+        <% } %>
+        <% if (section.content && section.content.isi) { %>
+          <div class="rich-content"><%- section.content.isi %></div>
+        <% } %>
+      </div>
+    </article>
+  <% }); %>
 </section>
 
 <%- include('../partials/footer', { footer }) %>

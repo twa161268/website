@@ -49,6 +49,7 @@
 
 <!-- SCREEN 2: ABOUT, VISI/MISI, ARTICLES, FOOTER -->
 <section class="home-screen2" aria-label="Informasi dan artikel">
+  <a class="home-about-screen-link" href="/about" aria-label="Buka halaman About">
   <section class="home-about-section" id="about">
     <div class="home-section-heading"><span></span><h2>Tentang kami</h2></div>
     <%
@@ -69,8 +70,8 @@
   </section>
 
   <%
-    const visiSection = (aboutSections || []).find((section) => section.judul === 'ABOUT3');
-    const misiSection = (aboutSections || []).find((section) => section.judul === 'ABOUT4');
+    const misiSection = (aboutSections || []).find((section) => section.judul === 'ABOUT3');
+    const visiSection = (aboutSections || []).find((section) => section.judul === 'ABOUT4');
   %>
   <section class="home-vision-section" aria-label="Visi dan Misi">
     <article class="home-vision-card">
@@ -97,6 +98,7 @@
       </div>
     </article>
   </section>
+  </a>
 
   <section class="home-articles-section" id="articles">
     <div class="home-section-heading home-articles-heading"><span>OUR STORIES</span><h2>Articles</h2></div>

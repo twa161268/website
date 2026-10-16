@@ -3313,3 +3313,112 @@ body:has(.home-screen1) .public-nav a {
      --banner1-height: 12vh;  = Banner 1 lebih tinggi
      --banner2-height: 10vh;  = Banner 2 lebih pendek
    ========================================================= */
+
+
+/* =========================================================
+   ABOUT PAGE + CLICKABLE ABOUT AREA ON HOME SCREEN 2
+   ========================================================= */
+.home-about-screen-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter .2s ease;
+}
+.home-about-screen-link:hover {
+  color: inherit;
+  text-decoration: none;
+  filter: brightness(.985);
+}
+.home-about-screen-link:focus-visible {
+  outline: 3px solid #9b7bc5;
+  outline-offset: -3px;
+}
+.about-page {
+  width: min(1120px, calc(100% - 40px));
+  max-width: 1120px;
+  padding: 125px 0 70px;
+  min-height: 75vh;
+}
+.about-page-heading {
+  max-width: 760px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+.about-page-heading > span,
+.about-page-eyebrow {
+  display: inline-block;
+  color: #9a7956;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.about-page-heading h1 {
+  margin: 8px 0 12px;
+  color: #202832;
+  font-family: Montserrat, Arial, sans-serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 700;
+}
+.about-page-heading p {
+  margin: 0;
+  color: #68717a;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.about-page-section {
+  overflow: hidden;
+  margin: 0 0 34px;
+  padding: clamp(18px, 3vw, 32px);
+  border: 1px solid rgba(35, 43, 52, .08);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(25, 35, 45, .055);
+}
+.about-page-image {
+  width: 100%;
+  margin: 0 auto 24px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #f1efeb;
+}
+.about-page-image img {
+  display: block;
+  width: 100%;
+  max-height: 560px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+.about-page-copy {
+  max-width: 940px;
+  margin: 0 auto;
+  color: #39434d;
+}
+.about-page-copy h2 {
+  margin: 6px 0 14px;
+  color: #202832;
+  font-family: Montserrat, Arial, sans-serif;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 700;
+}
+.about-page-copy .rich-content {
+  font-size: 16px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+.about-page-copy .rich-content > :first-child { margin-top: 0; }
+.about-page-copy .rich-content > :last-child { margin-bottom: 0; }
+.about-page-section-about3,
+.about-page-section-about4 {
+  background: linear-gradient(135deg, #fff 0%, #f8f6f2 100%);
+}
+@media (max-width: 767px) {
+  .about-page { width: calc(100% - 28px); padding: 100px 0 42px; }
+  .about-page-heading { margin-bottom: 28px; }
+  .about-page-heading p { font-size: 14px; }
+  .about-page-section { margin-bottom: 20px; padding: 16px; border-radius: 12px; }
+  .about-page-image { margin-bottom: 18px; border-radius: 8px; }
+  .about-page-image img { max-height: 360px; }
+  .about-page-copy .rich-content { font-size: 15px; line-height: 1.75; }
+}
