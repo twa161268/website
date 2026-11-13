@@ -52,16 +52,22 @@
   <section class="home-about-section" id="about">
     <a class="home-about-screen-link" href="/about" aria-label="Buka halaman About" title="Klik untuk melihat halaman About"></a>
     <div class="home-section-heading"><span></span><h2>Tentang kami</h2></div>
-    <% const homeAboutSections = (aboutSections || []).filter(section => {
-      const n = section.judul === 'ABOUT' ? 1 : Number(section.judul.replace('ABOUT', ''));
-      return Number.isFinite(n) && n >= 1 && n <= 4;
-    }); %>
-    <% if (homeAboutSections.length) { %>
+    <% if ((aboutSections || []).length) { %>
       <div class="home-about-grid">
-        <% homeAboutSections.forEach((section) => { %>
+        <% aboutSections.forEach((section) => { %>
           <article class="home-about-item">
-            <% if (section.image?.gambar) { %><img src="<%= section.image.gambar %>" alt="<%= section.judul %>" loading="lazy"><% } %>
-            <% if (section.content?.isi) { %><div class="home-about-copy"><%- section.content.isi %></div><% } %>
+            <% (section.contents || []).forEach((block) => { %>
+              <% if (block.tipe === 'GAMBAR' && block.media_url) { %>
+                <img src="<%= block.media_url %>" alt="<%= section.judul %>" loading="lazy">
+              <% } else if (block.tipe === 'TEKS' && block.isi) { %>
+                <div class="home-about-copy">
+                  <% if (!/^ABOUT[0-9]*$/i.test(section.judul || '')) { %><h3><%= section.judul %></h3><% } %>
+                  <%- block.isi %>
+                </div>
+              <% } else if (block.tipe === 'VIDEO' && block.media_url) { %>
+                <div class="home-about-copy"><video src="<%= block.media_url %>" controls playsinline preload="metadata" style="max-width:100%;height:auto;"></video></div>
+              <% } %>
+            <% }); %>
           </article>
         <% }); %>
       </div>

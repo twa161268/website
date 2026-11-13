@@ -1,3 +1,18 @@
-<%- include('../partials/header',{pageTitle:'Artikel'}) %><%- include('../partials/sidebar') %>
-<div class="page-actions"><a class="button primary" href="/admin/artikel/tambah">+ Tambah Artikel</a></div><div class="table-wrap"><table><thead><tr><th>ID</th><th>Judul</th><th>Status</th><th>Pin</th><th>Created At</th><th>Action</th></tr></thead><tbody><% articles.forEach(a=>{ %><tr><td><%= a.id %></td><td><%= a.judul %></td><td><span class="badge <%= a.status==='1'?'active':'inactive' %>"><%= a.status==='1'?'Aktif':'Nonaktif' %></span></td><td><%= a.statuspin==='1'?'Ya':'Tidak' %></td><td><%= a.created_at ? new Date(a.created_at).toLocaleString('id-ID') : '' %></td><td class="actions"><a href="/admin/artikel/detail/<%= a.id %>">Detail</a><a href="/admin/artikel/edit/<%= a.id %>">Edit</a><form method="post" action="/admin/artikel/delete/<%= a.id %>" data-confirm="Apakah Anda yakin ingin menghapus artikel ini?"><button class="link-danger" type="submit">Delete</button></form></td></tr><% }) %></tbody></table></div>
+<%- include('../partials/header',{pageTitle:'Konten Website'}) %><%- include('../partials/sidebar') %>
+<div class="page-actions" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+  <form method="get" action="/admin/artikel" style="display:flex;gap:8px;align-items:center">
+    <label for="kategoriFilter">Kategori</label>
+    <select id="kategoriFilter" name="kategori" onchange="this.form.submit()">
+      <option value="">Semua Kategori</option>
+      <% [['artikel','Artikel'],['about','About'],['produk','Produk'],['form','Form']].forEach(([value,label])=>{ %>
+        <option value="<%= value %>" <%= kategori===value?'selected':'' %>><%= label %></option>
+      <% }) %>
+    </select>
+  </form>
+  <a class="button primary" href="/admin/artikel/tambah<%= kategori ? '?kategori='+kategori : '' %>">+ Tambah Konten</a>
+</div>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Judul</th><th>Kategori</th><th>Status</th><th>Pin</th><th>Created At</th><th>Action</th></tr></thead><tbody>
+<% articles.forEach(a=>{ %><tr><td><%= a.id %></td><td><%= a.judul %></td><td><%= ({artikel:'Artikel',about:'About',produk:'Produk',form:'Form'})[a.kategori] || a.kategori || 'Artikel' %></td><td><span class="badge <%= a.status==='1'?'active':'inactive' %>"><%= a.status==='1'?'Aktif':'Nonaktif' %></span></td><td><%= a.statuspin==='1'?'Ya':'Tidak' %></td><td><%= a.created_at ? new Date(a.created_at).toLocaleString('id-ID') : '' %></td><td class="actions"><a href="/admin/artikel/detail/<%= a.id %>">Detail</a><a href="/admin/artikel/edit/<%= a.id %>">Edit</a><form method="post" action="/admin/artikel/delete/<%= a.id %>" data-confirm="Apakah Anda yakin ingin menghapus konten ini?"><button class="link-danger" type="submit">Delete</button></form></td></tr><% }) %>
+<% if (!articles.length) { %><tr><td colspan="7">Belum ada konten untuk kategori ini.</td></tr><% } %>
+</tbody></table></div>
 <%- include('../partials/footer') %>

@@ -1,28 +1,22 @@
 <%- include('../partials/header', { pageTitle: 'About Us', footer, currentPage: 'about' }) %>
-
-<section class="about-page content-page" aria-label="About Us, Misi, dan Visi">
-  <header class="about-page-heading">
-    <span>WHO WE ARE</span>
-    <h1>About Us</h1>
-    <p>Mengenal kami, misi, dan visi yang menjadi arah perjalanan kami.</p>
-  </header>
-
-  <% const orderedSections = (sections || []).slice(); %>
-
-  <% orderedSections.forEach((section, index) => { %>
-    <article class="about-page-section <%= index % 2 === 0 ? 'about-page-section-even' : 'about-page-section-odd' %>" id="<%= section.judul.toLowerCase() %>">
-      <% if (section.image && section.image.gambar) { %>
-        <div class="about-page-image">
-          <img src="<%= section.image.gambar %>" alt="<%= section.judul %>" loading="lazy">
-        </div>
-      <% } %>
-      <% if (section.content && section.content.isi) { %>
-        <div class="about-page-copy">
-          <div class="rich-content"><%- section.content.isi %></div>
-        </div>
-      <% } %>
+<section class="about-page content-page" aria-label="About Us">
+  <header class="about-page-heading"><span>WHO WE ARE</span><h1>About Us</h1><p>Mengenal kami dan perjalanan kami.</p></header>
+  <% (sections || []).forEach((section, index) => { %>
+    <article class="about-page-section <%= index % 2 === 0 ? 'about-page-section-even' : 'about-page-section-odd' %>" id="konten-<%= section.id %>">
+      <div class="about-page-copy">
+        <% if (!/^ABOUT[0-9]*$/i.test(section.judul || '')) { %><h2><%= section.judul %></h2><% } %>
+        <% (section.contents || []).forEach((block) => { %>
+          <% if (block.tipe === 'TEKS' && block.isi) { %>
+            <div class="rich-content"><%- block.isi %></div>
+          <% } else if (block.tipe === 'GAMBAR' && block.media_url) { %>
+            <div class="about-page-image"><img src="<%= block.media_url %>" alt="<%= section.judul %>" loading="lazy"></div>
+          <% } else if (block.tipe === 'VIDEO' && block.media_url) { %>
+            <div class="about-page-video"><video src="<%= block.media_url %>" controls playsinline preload="metadata"></video></div>
+          <% } %>
+        <% }) %>
+      </div>
     </article>
-  <% }); %>
+  <% }) %>
+  <% if (!(sections || []).length) { %><p>Konten About belum tersedia.</p><% } %>
 </section>
-
 <%- include('../partials/footer', { footer }) %>

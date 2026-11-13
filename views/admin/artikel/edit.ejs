@@ -1,4 +1,4 @@
-<%- include('../partials/header',{pageTitle:'Edit Artikel'}) %>
+<%- include('../partials/header',{pageTitle:'Edit Konten Website'}) %>
   <%- include('../partials/sidebar') %>
 
     <style>
@@ -185,7 +185,7 @@
 
         <div class="editor-card">
 
-          <h2>Edit Artikel</h2>
+          <h2>Edit Konten Website</h2>
 
 
           <form id="articleForm" method="post" action="/admin/artikel/edit/<%= article.id %>"
@@ -200,6 +200,17 @@
               <input type="text" name="judul" value="<%= article.judul || '' %>" required>
             </label>
 
+
+            <label>
+              Kategori Konten
+              <select name="kategori" required>
+                <% const selectedKategori = ['artikel','about','produk','form'].includes(String(article.kategori || '').toLowerCase()) ? String(article.kategori).toLowerCase() : 'artikel'; %>
+                <option value="artikel" <%= selectedKategori === 'artikel' ? 'selected' : '' %>>Artikel</option>
+                <option value="about" <%= selectedKategori === 'about' ? 'selected' : '' %>>About</option>
+                <option value="produk" <%= selectedKategori === 'produk' ? 'selected' : '' %>>Produk</option>
+                <option value="form" <%= selectedKategori === 'form' ? 'selected' : '' %>>Form</option>
+              </select>
+            </label>
 
             <label>
               Slug

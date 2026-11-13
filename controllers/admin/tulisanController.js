@@ -29,7 +29,7 @@ async function uniqueSlug(slug, excludeId = null) {
 async function index(req, res, next) {
   try {
     const items = await db.query(
-      'SELECT * FROM tulisan ORDER BY statuspin DESC, created_at DESC'
+      "SELECT * FROM tulisan WHERE judul !~ '^ABOUT[0-9]*$' ORDER BY statuspin DESC, created_at DESC"
     );
     res.render('admin/tulisan/index', { items });
   } catch (e) {
@@ -43,6 +43,7 @@ async function create(req, res, next) {
   try {
     const judul = String(req.body.judul || '').trim();
     if (!judul) throw new Error('Judul tulisan wajib diisi.');
+    if (/^ABOUT[0-9]*$/i.test(judul)) throw new Error('Konten About sekarang dikelola melalui menu Konten Website.');
     const slug = await uniqueSlug(req.body.slug || judul);
     await db.query(
       'INSERT INTO tulisan (judul,slug,isi,status,statuspin,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,NOW(),NOW())',
@@ -65,7 +66,7 @@ async function create(req, res, next) {
 }
 async function showEdit(req, res, next) {
   try {
-    const rows = await db.query('SELECT * FROM tulisan WHERE id=$1', [
+    const rows = await db.query("SELECT * FROM tulisan WHERE id=$1 AND judul !~ '^ABOUT[0-9]*$'", [
       req.params.id,
     ]);
     if (!rows[0])
@@ -80,7 +81,7 @@ async function showEdit(req, res, next) {
 async function update(req, res, next) {
   try {
     const id = Number(req.params.id);
-    const rows = await db.query('SELECT id FROM tulisan WHERE id=$1', [id]);
+    const rows = await db.query("SELECT id FROM tulisan WHERE id=$1 AND judul !~ '^ABOUT[0-9]*$'", [id]);
     if (!rows[0])
       return res
         .status(404)
@@ -102,7 +103,7 @@ async function update(req, res, next) {
     res.redirect('/admin/tulisan');
   } catch (e) {
     if (e.message && !e.code) {
-      const rows = await db.query('SELECT * FROM tulisan WHERE id=$1', [
+      const rows = await db.query("SELECT * FROM tulisan WHERE id=$1 AND judul !~ '^ABOUT[0-9]*$'", [
         req.params.id,
       ]);
       return res
@@ -117,7 +118,7 @@ async function update(req, res, next) {
 }
 async function remove(req, res, next) {
   try {
-    const rows = await db.query('SELECT id FROM tulisan WHERE id=$1', [
+    const rows = await db.query("SELECT id FROM tulisan WHERE id=$1 AND judul !~ '^ABOUT[0-9]*$'", [
       req.params.id,
     ]);
     if (!rows[0])

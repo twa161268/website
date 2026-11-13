@@ -12,36 +12,20 @@
 
     </form>
     <div class="media-grid product-grid">
-      <% items.forEach(item=> { %>
-
+      <% items.forEach(item => { %>
         <article class="media-card">
-
-          <% const url=item.gambar || '' ; const isPdf=/\.pdf$/i.test(url); const
-            isVideo=/\.(mp4|webm|ogg|mov|m4v)$/i.test(url); %>
-
-            <% if (isPdf) { %>
-
-              <div class="pdf-box">PDF</div>
-
-              <% } else if (isVideo) { %>
-
-                <video class="product-image" src="<%= url %>" controls muted playsinline preload="metadata">
-                </video>
-
-                <% } else if (url) { %>
-
-                  <img src="<%= url %>" alt="<%= item.judul %>" class="product-image" data-full-image="<%= url %>"
-                    data-title="<%= item.judul %>">
-
-                <% } %>
-
-                    <h2>
-                      <%= item.judul %>
-                    </h2>
-
+          <h2><%= item.judul %></h2>
+          <% (item.contents || []).forEach(block => { %>
+            <% if (block.tipe === 'TEKS' && block.isi) { %>
+              <div class="product-description"><%- block.isi %></div>
+            <% } else if (block.tipe === 'GAMBAR' && block.media_url) { %>
+              <img src="<%= block.media_url %>" alt="<%= item.judul %>" class="product-image" data-full-image="<%= block.media_url %>" data-title="<%= item.judul %>">
+            <% } else if (block.tipe === 'VIDEO' && block.media_url) { %>
+              <video class="product-image" src="<%= block.media_url %>" controls muted playsinline preload="metadata" data-title="<%= item.judul %>"></video>
+            <% } %>
+          <% }) %>
         </article>
-
-        <% }) %>
+      <% }) %>
     </div>
   </section>
 

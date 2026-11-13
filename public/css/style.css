@@ -3403,6 +3403,19 @@ body:has(.home-screen1) .public-nav a {
   object-fit: contain;
   margin: 0 auto;
 }
+ .about-page-video {
+  max-width: 100%;
+  margin: 20px auto;
+  text-align: center;
+}
+.about-page-video video {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  max-height: 560px;
+  height: auto;
+  border-radius: 10px;
+}
 .about-page-copy {
   max-width: 940px;
   margin: 0 auto;

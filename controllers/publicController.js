@@ -66,106 +66,71 @@ async function getFooter() {
   };
 }
 
+async function getCategoryContent(kategori, { activeOnly = true } = {}) {
+  const rows = await db.query(
+    `SELECT * FROM artikel
+     WHERE kategori = $1 ${activeOnly ? "AND status = '1'" : ''}
+     ORDER BY statuspin DESC, created_at DESC, id DESC`,
+    [kategori]
+  );
+  if (!rows.length) return [];
+  const ids = rows.map((row) => row.id);
+  const blocks = await db.query(
+    `SELECT * FROM artikel_konten
+     WHERE artikel_id = ANY($1::int[])
+     ORDER BY artikel_id, urutan ASC, id ASC`,
+    [ids]
+  );
+  const byArticle = new Map();
+  for (const block of blocks) {
+    if (!byArticle.has(block.artikel_id)) byArticle.set(block.artikel_id, []);
+    byArticle.get(block.artikel_id).push(block);
+  }
+  return rows.map((row) => ({ ...row, contents: byArticle.get(row.id) || [] }));
+}
+
 async function home(req, res, next) {
   try {
-    const [backgrounds, banners, title, subtitle, articles, aboutTexts, aboutImages, footer] =
-      await Promise.all([
-        db.query(`
-          SELECT *
-          FROM gambar
-          WHERE kategori = 'BACK'
-            AND status = '1'
-          ORDER BY statuspin DESC, created_at DESC
-        `),
-        db.query(`
-          SELECT
-            g.*,
-            CASE WHEN a.status = '1' THEN a.slug ELSE NULL END AS artikel_slug,
-            CASE WHEN a.status = '1' THEN a.judul ELSE NULL END AS artikel_judul
-          FROM gambar g
-          LEFT JOIN artikel a ON a.id = g.artikel_id
-          WHERE g.kategori = 'BANNER'
-            AND g.status = '1'
-            AND g.judul IN ('BANNER1', 'BANNER2', 'BANNER3', 'BANNER4')
-          ORDER BY CASE g.judul
-            WHEN 'BANNER1' THEN 1
-            WHEN 'BANNER2' THEN 2
-            WHEN 'BANNER3' THEN 3
-            WHEN 'BANNER4' THEN 4
-            ELSE 99
-          END
-        `),
-        getTulisanByJudul('TITLE'),
-        getTulisanByJudul('SUBTITLE'),
-        db.query(`
-          SELECT
-            a.*,
-            (SELECT ak.media_url
-             FROM artikel_konten ak
-             WHERE ak.artikel_id = a.id
-               AND ak.tipe = 'GAMBAR'
-               AND ak.media_url IS NOT NULL
-             ORDER BY ak.urutan ASC, ak.id ASC
-             LIMIT 1) AS thumbnail,
-            (SELECT ak.isi
-             FROM artikel_konten ak
-             WHERE ak.artikel_id = a.id
-               AND ak.tipe = 'TEKS'
-               AND ak.isi IS NOT NULL
-               AND TRIM(ak.isi) <> ''
-             ORDER BY ak.urutan ASC, ak.id ASC
-             LIMIT 1) AS overview
-          FROM artikel a
-          WHERE a.status = '1'
-          ORDER BY a.statuspin DESC, a.created_at DESC
-          LIMIT 4
-        `),
-        db.query(`
-          SELECT judul, isi
-          FROM tulisan
-          WHERE status = '1'
-            AND judul ~ '^ABOUT[0-9]*$'
-        `),
-        db.query(`
-          SELECT judul, gambar
-          FROM gambar
-          WHERE kategori = 'ABOUT'
-            AND status = '1'
-            AND judul ~ '^ABOUT[0-9]*$'
-        `),
-        getFooter(),
-      ]);
-
-    const textMap = Object.fromEntries(aboutTexts.map((row) => [row.judul, row]));
-    const imageMap = Object.fromEntries(aboutImages.map((row) => [row.judul, row]));
-    const aboutTitles = [...new Set([
-      ...aboutTexts.map((row) => row.judul),
-      ...aboutImages.map((row) => row.judul),
-    ])].sort((a, b) => {
-      const numberOf = (value) => value === 'ABOUT' ? 1 : Number(value.replace('ABOUT', ''));
-      return numberOf(a) - numberOf(b);
-    });
-    const aboutSections = aboutTitles.map((judul) => ({
-      judul,
-      content: textMap[judul] || null,
-      image: imageMap[judul] || null,
+    const [backgrounds, banners, title, subtitle, allArticles, aboutRecords, footer] = await Promise.all([
+      db.query(`SELECT * FROM gambar WHERE kategori = 'BACK' AND status = '1' ORDER BY statuspin DESC, created_at DESC`),
+      db.query(`
+        SELECT g.*, CASE WHEN a.status = '1' AND COALESCE(a.kategori,'artikel') = 'artikel' THEN a.slug ELSE NULL END AS artikel_slug,
+               CASE WHEN a.status = '1' AND COALESCE(a.kategori,'artikel') = 'artikel' THEN a.judul ELSE NULL END AS artikel_judul
+        FROM gambar g LEFT JOIN artikel a ON a.id = g.artikel_id
+        WHERE g.kategori = 'BANNER' AND g.status = '1'
+          AND g.judul IN ('BANNER1','BANNER2','BANNER3','BANNER4')
+        ORDER BY CASE g.judul WHEN 'BANNER1' THEN 1 WHEN 'BANNER2' THEN 2 WHEN 'BANNER3' THEN 3 WHEN 'BANNER4' THEN 4 ELSE 99 END
+      `),
+      getTulisanByJudul('TITLE'),
+      getTulisanByJudul('SUBTITLE'),
+      getCategoryContent('artikel'),
+      getCategoryContent('about'),
+      getFooter(),
+    ]);
+    const articles = allArticles.slice(0, 4).map((article) => ({
+      ...article,
+      thumbnail: article.contents.find((c) => c.tipe === 'GAMBAR')?.media_url || null,
+      overview: article.contents.find((c) => c.tipe === 'TEKS')?.isi || '',
     }));
-
+    // Homepage menampilkan seluruh konten kategori About yang memiliki blok teks.
+    // Seluruh blok teks/gambar/video dipertahankan sesuai urutan artikel_konten.
+    const aboutSections = aboutRecords
+      .filter((article) => article.contents.some((block) =>
+        block.tipe === 'TEKS' && String(block.isi || '').trim() !== ''
+      ))
+      .map((article) => ({
+        ...article,
+        image: article.contents.find((c) => c.tipe === 'GAMBAR') || null,
+        content: article.contents.find((c) => c.tipe === 'TEKS') || null,
+      }));
     res.render('public/home', {
       currentPage: 'home',
       backgroundWide: backgrounds.find((item) => item.slug === 'background-wide') || backgrounds[0] || null,
       backgroundSquare: backgrounds.find((item) => item.slug === 'background-square') || null,
       backgroundMobile: backgrounds.find((item) => item.slug === 'background-mobile') || null,
-      banners: banners || [],
-      title,
-      subtitle,
-      articles: articles || [],
-      aboutSections,
-      footer,
+      banners: banners || [], title, subtitle, articles, aboutSections, footer,
     });
-  } catch (err) {
-    next(err);
-  }
+  } catch (err) { next(err); }
 }
 
 /*
@@ -183,95 +148,18 @@ async function about(req, res, next) {
 
 async function about(req, res, next) {
   try {
-    const [texts, images, footer] = await Promise.all([
-      db.query(`
-        SELECT judul, isi
-        FROM tulisan
-        WHERE status = '1'
-          AND judul ~ '^ABOUT[0-9]*$'
-      `),
-
-      db.query(`
-        SELECT judul, gambar
-        FROM gambar
-        WHERE kategori = 'ABOUT'
-          AND status = '1'
-          AND judul ~ '^ABOUT[0-9]*$'
-      `),
-
-      getFooter(),
-    ]);
-
-    // Buat map berdasarkan judul
-    const textMap = Object.fromEntries(texts.map((row) => [row.judul, row]));
-
-    const imageMap = Object.fromEntries(images.map((row) => [row.judul, row]));
-
-    // Gabungkan semua judul dari tulisan + gambar
-    const judulSet = new Set([
-      ...texts.map((row) => row.judul),
-      ...images.map((row) => row.judul),
-    ]);
-
-    // ABOUT = 1, ABOUT2 = 2, ABOUT3 = 3, dst.
-    const sections = [...judulSet]
-      .sort((a, b) => {
-        const nomorA = a === 'ABOUT' ? 1 : parseInt(a.replace('ABOUT', ''), 10);
-        const nomorB = b === 'ABOUT' ? 1 : parseInt(b.replace('ABOUT', ''), 10);
-
-        return nomorA - nomorB;
-      })
-      .map((judul) => ({
-        judul,
-        content: textMap[judul] || null,
-        image: imageMap[judul] || null,
-      }));
-
-    res.render('public/about', {
-      sections,
-      footer,
-    });
-  } catch (err) {
-    next(err);
-  }
+    const [sections, footer] = await Promise.all([getCategoryContent('about'), getFooter()]);
+    res.render('public/about', { sections, footer });
+  } catch (err) { next(err); }
 }
 
 async function product(req, res, next) {
   try {
     const q = (req.query.q || '').trim();
-
-    let sql = `
-      SELECT *
-      FROM gambar
-      WHERE kategori = 'PRODUK'
-        AND status = '1'
-    `;
-
-    const params = [];
-
-    // Jika ada kata kunci pencarian
-    if (q) {
-      params.push(`%${q}%`);
-
-      sql += `
-        AND judul ILIKE $1
-      `;
-    }
-
-    sql += `
-      ORDER BY created_at DESC
-    `;
-
-    const items = await db.query(sql, params);
-
-    res.render('public/product', {
-      items,
-      q,
-      footer: await getFooter(),
-    });
-  } catch (err) {
-    next(err);
-  }
+    let items = await getCategoryContent('produk');
+    if (q) items = items.filter((item) => item.judul.toLowerCase().includes(q.toLowerCase()) || item.contents.some((c) => c.tipe === 'TEKS' && String(c.isi || '').toLowerCase().includes(q.toLowerCase())));
+    res.render('public/product', { items, q, footer: await getFooter() });
+  } catch (err) { next(err); }
 }
 
 /*
@@ -290,13 +178,9 @@ async function product(req, res, next) {
 
 async function form(req, res, next) {
   try {
-    const items = await db.query(
-      "SELECT * FROM gambar WHERE kategori = 'FORM' AND status = '1' ORDER BY created_at DESC"
-    );
+    const items = await getCategoryContent('form');
     res.render('public/form', { items, footer: await getFooter() });
-  } catch (err) {
-    next(err);
-  }
+  } catch (err) { next(err); }
 }
 
 async function gallery(req, res, next) {
@@ -386,6 +270,7 @@ async function artikel(req, res, next) {
       FROM artikel a
 
       WHERE a.status = '1'
+        AND COALESCE(a.kategori, 'artikel') = 'artikel'
     `;
 
     const params = [];
@@ -411,7 +296,8 @@ async function artikel(req, res, next) {
     sql += `
       ORDER BY
         a.statuspin DESC,
-        a.created_at DESC
+        a.created_at DESC,
+        a.id DESC
     `;
 
     const articles = await db.query(sql, params);
@@ -480,7 +366,7 @@ async function artikel(req, res, next) {
 async function detailArtikel(req, res, next) {
   try {
     const articles = await db.query(
-      "SELECT * FROM artikel WHERE slug = $1 AND status = '1' LIMIT 1",
+      "SELECT * FROM artikel WHERE slug = $1 AND status = '1' AND COALESCE(kategori, 'artikel') = 'artikel' LIMIT 1",
       [req.params.slug]
     );
 

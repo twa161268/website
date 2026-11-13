@@ -155,11 +155,16 @@ async function uploadToSupabase(file) {
 
 async function index(req, res, next) {
   try {
+    const kategori = ['artikel', 'about', 'produk', 'form'].includes(String(req.query.kategori || '').toLowerCase())
+      ? String(req.query.kategori).toLowerCase() : '';
     const articles = await db.query(
-      'SELECT * FROM artikel ORDER BY statuspin DESC, created_at DESC'
+      kategori
+        ? 'SELECT * FROM artikel WHERE kategori = $1 ORDER BY statuspin DESC, created_at DESC, id DESC'
+        : 'SELECT * FROM artikel ORDER BY statuspin DESC, created_at DESC, id DESC',
+      kategori ? [kategori] : []
     );
 
-    res.render('admin/artikel/index', { articles });
+    res.render('admin/artikel/index', { articles, kategori });
   } catch (err) {
     next(err);
   }
@@ -168,6 +173,7 @@ async function index(req, res, next) {
 function showCreate(req, res) {
   res.render('admin/artikel/tambah', {
     article: null,
+    kategori: String(req.query.kategori || 'artikel').toLowerCase(),
     error: null,
   });
 }
@@ -180,6 +186,8 @@ async function create(req, res, next) {
 
   try {
     const judul = String(req.body.judul || '').trim();
+    const kategori = ['artikel', 'about', 'produk', 'form'].includes(String(req.body.kategori || '').toLowerCase())
+      ? String(req.body.kategori).toLowerCase() : 'artikel';
 
     if (!judul) {
       throw new Error('Judul artikel wajib diisi.');
@@ -253,6 +261,7 @@ async function create(req, res, next) {
          isi,
          status,
          statuspin,
+         kategori,
          created_at,
          updated_at
        )
@@ -263,11 +272,12 @@ async function create(req, res, next) {
          $3,
          $4,
          $5,
+         $6,
          NOW(),
          NOW()
        )
        RETURNING id`,
-      [judul, slug, '', status, statuspin]
+      [judul, slug, '', status, statuspin, kategori]
     );
 
     const articleId = inserted.rows[0].id;
@@ -379,6 +389,7 @@ async function create(req, res, next) {
     if (err.message && !err.code) {
       return res.status(400).render('admin/artikel/tambah', {
         article: req.body,
+        kategori: String(req.body.kategori || 'artikel').toLowerCase(),
         error: err.message,
       });
     }
@@ -516,6 +527,8 @@ async function update(req, res, next) {
 
     const status = req.body.status === '1' ? '1' : '0';
     const statuspin = req.body.statuspin === '1' ? '1' : '0';
+    const kategori = ['artikel', 'about', 'produk', 'form'].includes(String(req.body.kategori || '').toLowerCase())
+      ? String(req.body.kategori).toLowerCase() : (existing.rows[0].kategori || 'artikel');
 
     const createdAt = String(req.body.created_at || '').trim();
 
@@ -708,10 +721,11 @@ async function update(req, res, next) {
        isi = $3,
        status = $4,
        statuspin = $5,
-       created_at = $6,
+       kategori = $6,
+       created_at = $7,
        updated_at = NOW()
-   WHERE id = $7`,
-      [judul, slug, '', status, statuspin, createdAt, id]
+   WHERE id = $8`,
+      [judul, slug, '', status, statuspin, kategori, createdAt, id]
     );
 
     // =====================================================
@@ -833,6 +847,7 @@ async function update(req, res, next) {
           ...req.body,
           id: req.params.id,
         },
+        kategori: String(req.body.kategori || 'artikel').toLowerCase(),
         contents,
         error: err.message,
       });

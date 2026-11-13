@@ -1,4 +1,4 @@
-<%- include('../partials/header',{pageTitle:'Detail Artikel'}) %>
+<%- include('../partials/header',{pageTitle:'Detail Konten Website'}) %>
 <%- include('../partials/sidebar') %>
 
 <style>
@@ -71,6 +71,7 @@
 <div class="article-detail-card">
 
   <h2><%= article.judul %></h2>
+  <div><strong>Kategori:</strong> <%= article.kategori || 'artikel' %></div>
 
   <div class="article-meta">
     <div>

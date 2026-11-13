@@ -1,4 +1,4 @@
-<%- include('../partials/header',{pageTitle:'Tambah Artikel'}) %>
+<%- include('../partials/header',{pageTitle:'Tambah Konten Website'}) %>
 <%- include('../partials/sidebar') %>
 
 <% if (error) { %>
@@ -25,6 +25,17 @@
   </label>
 
   <label>
+    Kategori Konten
+    <select name="kategori" required>
+      <% const selectedKategori = ['artikel','about','produk','form'].includes(kategori) ? kategori : 'artikel'; %>
+      <option value="artikel" <%= selectedKategori === 'artikel' ? 'selected' : '' %>>Artikel</option>
+      <option value="about" <%= selectedKategori === 'about' ? 'selected' : '' %>>About</option>
+      <option value="produk" <%= selectedKategori === 'produk' ? 'selected' : '' %>>Produk</option>
+      <option value="form" <%= selectedKategori === 'form' ? 'selected' : '' %>>Form</option>
+    </select>
+  </label>
+
+  <label>
     Slug
     <input
       name="slug"
@@ -37,7 +48,7 @@
   <div class="content-editor">
 
     <div class="content-editor-header">
-      <strong>Isi Artikel</strong>
+      <strong>Isi Konten</strong>
 
       <div class="content-buttons">
         <button type="button" class="button" id="btnTambahTeks">
@@ -63,7 +74,7 @@
       id="contentEmpty"
       class="content-empty"
     >
-      Belum ada isi artikel.<br>
+      Belum ada isi konten.<br>
       Gunakan tombol <strong>+ Teks</strong>,
       <strong>+ Gambar</strong>, atau
       <strong>+ Video</strong>.

@@ -102,11 +102,8 @@ async function uniqueSlug(slug, excludeId = null) {
 
 const categories = [
   'BACK',
-  'FORM',
   'GALLERY',
-  'PRODUK',
   'SOSMED',
-  'ABOUT',
   'BANNER',
 ];
 
@@ -114,7 +111,8 @@ async function getActiveArticles() {
   return db.query(`
     SELECT id, judul, slug, status
     FROM artikel
-    ORDER BY statuspin DESC, created_at DESC
+    WHERE COALESCE(kategori, 'artikel') = 'artikel'
+    ORDER BY statuspin DESC, created_at DESC, id DESC
   `);
 }
 
@@ -215,7 +213,7 @@ async function create(req, res, next) {
       }
 
       const articleRows = await db.query(
-        'SELECT id FROM artikel WHERE id=$1',
+        "SELECT id FROM artikel WHERE id=$1 AND COALESCE(kategori, 'artikel') = 'artikel'",
         [artikelId]
       );
 
@@ -329,7 +327,7 @@ async function update(req, res, next) {
       }
 
       const articleRows = await db.query(
-        'SELECT id FROM artikel WHERE id=$1',
+        "SELECT id FROM artikel WHERE id=$1 AND COALESCE(kategori, 'artikel') = 'artikel'",
         [artikelId]
       );
 
@@ -495,11 +493,8 @@ async function uniqueSlug(slug, excludeId = null) {
 }
 const categories = [
   'BACK',
-  'FORM',
   'GALLERY',
-  'PRODUK',
   'SOSMED',
-  'ABOUT',
   'BANNER',
 ];
 
@@ -507,13 +502,14 @@ async function getActiveArticles() {
   return db.query(`
     SELECT id, judul, slug, status
     FROM artikel
-    ORDER BY statuspin DESC, created_at DESC
+    WHERE COALESCE(kategori, 'artikel') = 'artikel'
+    ORDER BY statuspin DESC, created_at DESC, id DESC
   `);
 }
 async function index(req, res, next) {
   try {
     const items = await db.query(
-      'SELECT * FROM gambar ORDER BY created_at DESC'
+      "SELECT * FROM gambar WHERE COALESCE(kategori,'') NOT IN ('ABOUT','PRODUK','FORM') ORDER BY created_at DESC"
     );
     res.render('admin/gambar/index', { items });
   } catch (e) {
