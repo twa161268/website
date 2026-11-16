@@ -331,9 +331,9 @@ async function create(req, res, next) {
         // Pastikan tipe file sesuai
         if (
           block.tipe === 'GAMBAR' &&
-          !uploaded.storagePath.match(/\.(jpg|jpeg|png)$/i)
+          !uploaded.storagePath.match(/\.(jpg|jpeg|png|pdf)$/i)
         ) {
-          throw new Error('File pada blok GAMBAR bukan file gambar.');
+          throw new Error('File pada blok GAMBAR harus JPG, JPEG, PNG, atau PDF.');
         }
 
         if (
@@ -603,6 +603,7 @@ async function update(req, res, next) {
         'image/jpeg',
         'image/png',
         'image/jpg',
+        'application/pdf',
         'video/mp4',
         'video/webm',
         'video/ogg',
@@ -610,7 +611,7 @@ async function update(req, res, next) {
 
       if (!allowedMimeTypes.includes(file.mimetype)) {
         throw new Error(
-          'File tidak didukung. Hanya JPG, JPEG, PNG, MP4, WEBM, dan OGG.'
+          'File tidak didukung. Gunakan JPG, JPEG, PNG, PDF, MP4, WEBM, atau OGG.'
         );
       }
 
@@ -642,12 +643,12 @@ async function update(req, res, next) {
 
         if (
           content.tipe === 'GAMBAR' &&
-          !['.jpg', '.jpeg', '.png'].includes(ext)
+          !['.jpg', '.jpeg', '.png', '.pdf'].includes(ext)
         ) {
           throw new Error(
             `File pada block GAMBAR urutan ${
               content.urutan || '?'
-            } harus JPG, JPEG, atau PNG.`
+            } harus JPG, JPEG, PNG, atau PDF.`
           );
         }
 

@@ -12,6 +12,7 @@ const allowed = [
   'image/jpeg',
   'image/png',
   'image/jpg',
+  'application/pdf',
   'video/mp4',
   'video/webm',
   'video/ogg',
@@ -27,7 +28,7 @@ const upload = multer({
       ? cb(null, true)
       : cb(
           new Error(
-            'File tidak didukung. Hanya JPG, JPEG, PNG, MP4, WEBM, dan OGG.'
+            'File tidak didukung. Gunakan JPG, JPEG, PNG, PDF, MP4, WEBM, atau OGG.'
           )
         ),
 });

@@ -406,7 +406,7 @@
           'content-label';
 
         label.textContent =
-          'Pilih gambar';
+          'Pilih gambar atau PDF';
 
         const input =
           document.createElement('input');
@@ -418,7 +418,7 @@
           'content_media';
 
         input.accept =
-          'image/jpeg,image/png,image/jpg';
+          'image/jpeg,image/png,image/jpg,application/pdf';
 
         const preview =
           document.createElement('div');
@@ -436,13 +436,15 @@
 
           if (!file) return;
 
-          const image =
-            document.createElement('img');
-
-          image.src =
-            URL.createObjectURL(file);
-
-          preview.appendChild(image);
+          if (file.type === 'application/pdf') {
+            const pdf = document.createElement('div');
+            pdf.textContent = '📄 PDF: ' + file.name;
+            preview.appendChild(pdf);
+          } else {
+            const image = document.createElement('img');
+            image.src = URL.createObjectURL(file);
+            preview.appendChild(image);
+          }
 
         });
 

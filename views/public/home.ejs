@@ -45,6 +45,22 @@
       <% } %>
     </section>
   <% }); %>
+
+  <% const banner5 = banners.find((item) => item.judul === 'BANNER5'); %>
+  <% if (banner5 && banner5.gambar) { const url = banner5.gambar; const isVideo = /\.(mp4|webm|ogg|mov|m4v)(?:[?#].*)?$/i.test(url); const isPdf = /\.pdf(?:[?#].*)?$/i.test(url); %>
+  <section class="screen1-wide-banner screen1-wide-banner-5" aria-label="Banner 5">
+      <% if (isPdf) { %>
+        <iframe class="banner-pdf-preview" src="<%= url %>#toolbar=0&navpanes=0&scrollbar=0" title="Preview PDF BANNER5" loading="lazy"></iframe>
+      <% } else if (isVideo) { %>
+        <video src="<%= url %>" autoplay muted loop playsinline preload="metadata"></video>
+      <% } else { %>
+        <img src="<%= url %>" alt="<%= banner5.judul %>">
+      <% } %>
+      <% if (banner5.konten_slug) { %>
+        <a class="banner-click-overlay" href="/konten/<%= encodeURIComponent(banner5.konten_slug) %>" aria-label="Buka konten: <%= banner5.konten_judul || banner5.judul %>"></a>
+      <% } %>
+  </section>
+  <% } %>
 </section>
 
 <!-- SCREEN 2: ABOUT, VISI/MISI, ARTICLES, FOOTER -->
@@ -58,7 +74,11 @@
           <article class="home-about-item">
             <% (section.contents || []).forEach((block) => { %>
               <% if (block.tipe === 'GAMBAR' && block.media_url) { %>
-                <img src="<%= block.media_url %>" alt="<%= section.judul %>" loading="lazy">
+                <% if (/\.pdf(?:[?#].*)?$/i.test(block.media_url)) { %>
+                  <iframe class="about-pdf-preview" src="<%= block.media_url %>#toolbar=0&navpanes=0" title="PDF <%= section.judul %>" loading="lazy"></iframe>
+                <% } else { %>
+                  <img src="<%= block.media_url %>" alt="<%= section.judul %>" loading="lazy">
+                <% } %>
               <% } else if (block.tipe === 'TEKS' && block.isi) { %>
                 <div class="home-about-copy">
                   <% if (!/^ABOUT[0-9]*$/i.test(section.judul || '')) { %><h3><%= section.judul %></h3><% } %>

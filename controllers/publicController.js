@@ -94,12 +94,15 @@ async function home(req, res, next) {
     const [backgrounds, banners, title, subtitle, allArticles, aboutRecords, footer] = await Promise.all([
       db.query(`SELECT * FROM gambar WHERE kategori = 'BACK' AND status = '1' ORDER BY statuspin DESC, created_at DESC`),
       db.query(`
-        SELECT g.*, CASE WHEN a.status = '1' AND COALESCE(a.kategori,'artikel') = 'artikel' THEN a.slug ELSE NULL END AS artikel_slug,
+        SELECT g.*,
+               CASE WHEN a.status = '1' THEN a.slug ELSE NULL END AS konten_slug,
+               CASE WHEN a.status = '1' THEN a.judul ELSE NULL END AS konten_judul,
+               CASE WHEN a.status = '1' AND COALESCE(a.kategori,'artikel') = 'artikel' THEN a.slug ELSE NULL END AS artikel_slug,
                CASE WHEN a.status = '1' AND COALESCE(a.kategori,'artikel') = 'artikel' THEN a.judul ELSE NULL END AS artikel_judul
         FROM gambar g LEFT JOIN artikel a ON a.id = g.artikel_id
         WHERE g.kategori = 'BANNER' AND g.status = '1'
-          AND g.judul IN ('BANNER1','BANNER2','BANNER3','BANNER4')
-        ORDER BY CASE g.judul WHEN 'BANNER1' THEN 1 WHEN 'BANNER2' THEN 2 WHEN 'BANNER3' THEN 3 WHEN 'BANNER4' THEN 4 ELSE 99 END
+          AND g.judul IN ('BANNER1','BANNER2','BANNER3','BANNER4','BANNER5')
+        ORDER BY CASE g.judul WHEN 'BANNER1' THEN 1 WHEN 'BANNER2' THEN 2 WHEN 'BANNER3' THEN 3 WHEN 'BANNER4' THEN 4 WHEN 'BANNER5' THEN 5 ELSE 99 END
       `),
       getTulisanByJudul('TITLE'),
       getTulisanByJudul('SUBTITLE'),
@@ -405,6 +408,54 @@ async function detailArtikel(req, res, next) {
   }
 }
 
+// Halaman detail untuk konten kategori apa pun (artikel, about, produk, form).
+async function detailKonten(req, res, next) {
+  try {
+    const rows = await db.query(
+      "SELECT * FROM artikel WHERE slug = $1 AND status = '1' LIMIT 1",
+      [req.params.slug]
+    );
+    if (!rows[0]) {
+      return res.status(404).render('error', {
+        status: 404,
+        message: 'Konten tidak ditemukan.',
+      });
+    }
+    const article = rows[0];
+    const contents = await db.query(
+      `SELECT * FROM artikel_konten
+       WHERE artikel_id = $1
+       ORDER BY urutan ASC, id ASC`,
+      [article.id]
+    );
+    res.render('public/detailArtikel', {
+      article,
+      contents,
+      footer: await getFooter(),
+    });
+  } catch (err) { next(err); }
+}
+
+async function contactUs(req, res, next) {
+  try {
+    const rows = await db.query(
+      `SELECT slug FROM artikel
+       WHERE status = '1'
+         AND (LOWER(TRIM(judul)) = 'contact us'
+              OR LOWER(TRIM(slug)) = 'contact-us')
+       ORDER BY statuspin DESC, created_at DESC, id DESC
+       LIMIT 1`
+    );
+    if (!rows[0]) {
+      return res.status(404).render('error', {
+        status: 404,
+        message: 'Konten Contact Us belum dibuat atau belum diaktifkan.',
+      });
+    }
+    return res.redirect(`/konten/${encodeURIComponent(rows[0].slug)}`);
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   home,
   about,
@@ -413,4 +464,6 @@ module.exports = {
   gallery,
   artikel,
   detailArtikel,
+  detailKonten,
+  contactUs,
 };

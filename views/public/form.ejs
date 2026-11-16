@@ -1,13 +1,87 @@
 <%- include('../partials/header', { pageTitle: 'Form', footer }) %>
-<section class="content-page"><h1>Form</h1><div class="media-grid form-grid">
-<% items.forEach(item => { %>
-  <article class="media-card"><h2><%= item.judul %></h2>
-    <% (item.contents || []).forEach(block => { %>
-      <% if (block.tipe === 'TEKS' && block.isi) { %><div class="form-description"><%- block.isi %></div>
-      <% } else if (block.tipe === 'GAMBAR' && block.media_url) { %><img src="<%= block.media_url %>" alt="<%= item.judul %>">
-      <% } else if (block.tipe === 'VIDEO' && block.media_url) { %><video src="<%= block.media_url %>" controls playsinline preload="metadata"></video><% } %>
+<section class="content-page form-page">
+  <h1>Form</h1>
+  <div class="media-grid form-grid">
+    <% items.forEach(item => { %>
+      <article class="media-card form-media-card">
+        <h2><%= item.judul %></h2>
+        <% (item.contents || []).forEach((block, index) => { %>
+          <% if (block.tipe === 'TEKS' && block.isi) { %>
+            <div class="form-description"><%- block.isi %></div>
+          <% } else if (block.tipe === 'GAMBAR' && block.media_url) { %>
+            <% if (/\.pdf(?:[?#].*)?$/i.test(block.media_url)) { %>
+              <button type="button" class="form-media-open form-pdf-preview" data-media-type="pdf" data-media-src="<%= block.media_url %>#toolbar=0&navpanes=0&view=FitH" data-media-title="<%= item.judul %>" aria-label="Buka PDF <%= item.judul %>">
+                <iframe class="form-pdf-thumbnail" src="<%= block.media_url %>#toolbar=0&navpanes=0&view=FitH" title="Pratinjau PDF <%= item.judul %>" loading="lazy"></iframe>
+                <span class="form-pdf-thumbnail-hint">Klik untuk membuka dokumen</span>
+              </button>
+              <a class="form-media-download" href="<%= block.media_url %>" target="_blank" rel="noopener">Unduh PDF</a>
+            <% } else { %>
+              <button type="button" class="form-media-open" data-media-type="image" data-media-src="<%= block.media_url %>" data-media-title="<%= item.judul %>" aria-label="Perbesar gambar <%= item.judul %>">
+                <img src="<%= block.media_url %>" alt="<%= item.judul %>" loading="lazy">
+                <span class="form-zoom-hint">Klik untuk memperbesar</span>
+              </button>
+            <% } %>
+          <% } else if (block.tipe === 'VIDEO' && block.media_url) { %>
+            <video src="<%= block.media_url %>" controls playsinline preload="metadata"></video>
+          <% } %>
+        <% }) %>
+      </article>
     <% }) %>
-  </article>
-<% }) %>
-<% if (!items.length) { %><p>Belum ada konten Form.</p><% } %>
-</div></section><%- include('../partials/footer', { footer }) %>
+    <% if (!items.length) { %><p>Belum ada konten Form.</p><% } %>
+  </div>
+</section>
+
+<div class="form-viewer" id="formViewer" aria-hidden="true">
+  <button type="button" class="form-viewer-close" id="formViewerClose" aria-label="Tutup">&times;</button>
+  <div class="form-viewer-title" id="formViewerTitle"></div>
+  <div class="form-viewer-content" id="formViewerContent"></div>
+  <a class="form-viewer-open-link" id="formViewerOpenLink" href="#" target="_blank" rel="noopener">Buka di tab baru / unduh</a>
+</div>
+
+<script>
+(() => {
+  const viewer = document.getElementById('formViewer');
+  const content = document.getElementById('formViewerContent');
+  const title = document.getElementById('formViewerTitle');
+  const openLink = document.getElementById('formViewerOpenLink');
+  const closeButton = document.getElementById('formViewerClose');
+
+  function closeViewer() {
+    viewer.classList.remove('is-open');
+    viewer.setAttribute('aria-hidden', 'true');
+    content.replaceChildren();
+    document.body.classList.remove('form-viewer-lock');
+  }
+
+  document.querySelectorAll('.form-media-open').forEach((button) => {
+    button.addEventListener('click', () => {
+      const src = button.dataset.mediaSrc;
+      const type = button.dataset.mediaType;
+      title.textContent = button.dataset.mediaTitle || 'Form';
+      openLink.href = src;
+      const element = document.createElement(type === 'pdf' ? 'iframe' : 'img');
+      element.src = src;
+      if (type === 'pdf') {
+        element.title = title.textContent;
+        element.setAttribute('allow', 'fullscreen');
+      } else {
+        element.alt = title.textContent;
+      }
+      content.replaceChildren(element);
+      viewer.classList.add('is-open');
+      viewer.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('form-viewer-lock');
+      closeButton.focus();
+    });
+  });
+
+  closeButton.addEventListener('click', closeViewer);
+  viewer.addEventListener('click', (event) => {
+    if (event.target === viewer) closeViewer();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && viewer.classList.contains('is-open')) closeViewer();
+  });
+})();
+</script>
+<%- include('../partials/footer', { footer }) %>

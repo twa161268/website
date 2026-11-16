@@ -9,7 +9,11 @@
           <% if (block.tipe === 'TEKS' && block.isi) { %>
             <div class="rich-content"><%- block.isi %></div>
           <% } else if (block.tipe === 'GAMBAR' && block.media_url) { %>
-            <div class="about-page-image"><img src="<%= block.media_url %>" alt="<%= section.judul %>" loading="lazy"></div>
+            <% if (/\.pdf(?:[?#].*)?$/i.test(block.media_url)) { %>
+              <div class="about-page-pdf"><iframe src="<%= block.media_url %>#toolbar=1&navpanes=0" title="PDF <%= section.judul %>" loading="lazy"></iframe><a href="<%= block.media_url %>" target="_blank" rel="noopener">Buka atau unduh PDF</a></div>
+            <% } else { %>
+              <div class="about-page-image"><img src="<%= block.media_url %>" alt="<%= section.judul %>" loading="lazy"></div>
+            <% } %>
           <% } else if (block.tipe === 'VIDEO' && block.media_url) { %>
             <div class="about-page-video"><video src="<%= block.media_url %>" controls playsinline preload="metadata"></video></div>
           <% } %>

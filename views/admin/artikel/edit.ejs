@@ -347,20 +347,20 @@
                       <% } else if (content.tipe==='GAMBAR' ) { %>
 
                         <div class="current-media">
-
-                          <small>
-                            Gambar saat ini:
-                          </small>
-
-                          <img src="<%= content.media_url %>" alt="<%= article.judul %>">
-
+                          <small>File saat ini:</small>
+                          <% if (/\.pdf(?:[?#].*)?$/i.test(content.media_url || '')) { %>
+                            <div class="pdf-icon">PDF</div>
+                            <a href="<%= content.media_url %>" target="_blank" rel="noopener">Lihat PDF saat ini</a>
+                          <% } else { %>
+                            <img src="<%= content.media_url %>" alt="<%= article.judul %>">
+                          <% } %>
                         </div>
 
                         <label>
-                          Ganti gambar
+                          Ganti gambar atau PDF
 
                           <input type="file" class="content-media-input" name="content_media_<%= content.id %>"
-                            accept="image/jpeg,image/png,image/jpg">
+                            accept="image/jpeg,image/png,image/jpg,application/pdf">
                         </label>
 
                         <div class="media-preview"></div>
@@ -551,7 +551,7 @@
             type="file"
             class="content-media-input"
             name="content_media_${newKey}"
-            accept="image/jpeg,image/png,image/jpg"
+            accept="image/jpeg,image/png,image/jpg,application/pdf"
           >
         </label>
 
@@ -695,13 +695,15 @@
 
 
                   if (block.dataset.type === 'GAMBAR') {
-
-                    const img = document.createElement('img');
-
-                    img.src = url;
-
-                    preview.appendChild(img);
-
+                    if (file.type === 'application/pdf') {
+                      const pdf = document.createElement('div');
+                      pdf.textContent = '📄 PDF: ' + file.name;
+                      preview.appendChild(pdf);
+                    } else {
+                      const img = document.createElement('img');
+                      img.src = url;
+                      preview.appendChild(img);
+                    }
                   }
 
 

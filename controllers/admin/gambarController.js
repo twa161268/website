@@ -109,9 +109,8 @@ const categories = [
 
 async function getActiveArticles() {
   return db.query(`
-    SELECT id, judul, slug, status
+    SELECT id, judul, slug, kategori, status
     FROM artikel
-    WHERE COALESCE(kategori, 'artikel') = 'artikel'
     ORDER BY statuspin DESC, created_at DESC, id DESC
   `);
 }
@@ -122,6 +121,11 @@ async function uploadToSupabase(file) {
   }
 
   const ext = path.extname(file.originalname).toLowerCase();
+  const allowedByExtension = ['.jpg', '.jpeg', '.png', '.pdf', '.mp4', '.webm', '.ogg', '.mov'];
+  const allowedByMime = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf', 'video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+  if (!allowedByExtension.includes(ext) || !allowedByMime.includes(file.mimetype)) {
+    throw new Error('File tidak didukung. Gunakan JPG, JPEG, PNG, PDF, MP4, WEBM, OGG, atau MOV.');
+  }
 
   const filename =
     `${Date.now()}-` + `${crypto.randomBytes(8).toString('hex')}` + ext;
@@ -213,7 +217,7 @@ async function create(req, res, next) {
       }
 
       const articleRows = await db.query(
-        "SELECT id FROM artikel WHERE id=$1 AND COALESCE(kategori, 'artikel') = 'artikel'",
+        "SELECT id FROM artikel WHERE id=$1 AND kategori IN ('artikel','about','produk','form')",
         [artikelId]
       );
 
@@ -327,7 +331,7 @@ async function update(req, res, next) {
       }
 
       const articleRows = await db.query(
-        "SELECT id FROM artikel WHERE id=$1 AND COALESCE(kategori, 'artikel') = 'artikel'",
+        "SELECT id FROM artikel WHERE id=$1 AND kategori IN ('artikel','about','produk','form')",
         [artikelId]
       );
 
@@ -500,9 +504,8 @@ const categories = [
 
 async function getActiveArticles() {
   return db.query(`
-    SELECT id, judul, slug, status
+    SELECT id, judul, slug, kategori, status
     FROM artikel
-    WHERE COALESCE(kategori, 'artikel') = 'artikel'
     ORDER BY statuspin DESC, created_at DESC, id DESC
   `);
 }

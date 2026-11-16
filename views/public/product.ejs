@@ -1,190 +1,88 @@
-<%- include('../partials/header', { pageTitle: 'Product' , footer }) %>
+<%- include('../partials/header', { pageTitle: 'Product', footer }) %>
+<section class="content-page product-page">
+  <h1>Product</h1>
+  <form class="article-search product-search" method="GET" action="/product">
+    <input type="search" name="q" value="<%= q || '' %>" placeholder="Cari product..." autocomplete="off">
+    <button type="submit">Cari</button>
+  </form>
 
-  <section class="content-page">
-    <h1>Product</h1>
-
-    <form class="article-search product-search" method="GET" action="/product">
-      <input type="search" name="q" value="<%= q || '' %>" placeholder="Cari product..." autocomplete="off">
-
-      <button type="submit">
-        Cari
-      </button>
-
-    </form>
-    <div class="media-grid product-grid">
-      <% items.forEach(item => { %>
-        <article class="media-card">
-          <h2><%= item.judul %></h2>
-          <% (item.contents || []).forEach(block => { %>
-            <% if (block.tipe === 'TEKS' && block.isi) { %>
-              <div class="product-description"><%- block.isi %></div>
-            <% } else if (block.tipe === 'GAMBAR' && block.media_url) { %>
-              <img src="<%= block.media_url %>" alt="<%= item.judul %>" class="product-image" data-full-image="<%= block.media_url %>" data-title="<%= item.judul %>">
-            <% } else if (block.tipe === 'VIDEO' && block.media_url) { %>
-              <video class="product-image" src="<%= block.media_url %>" controls muted playsinline preload="metadata" data-title="<%= item.judul %>"></video>
+  <div class="media-grid product-grid">
+    <% items.forEach(item => { %>
+      <article class="media-card product-media-card">
+        <h2><%= item.judul %></h2>
+        <% (item.contents || []).forEach(block => { %>
+          <% if (block.tipe === 'TEKS' && block.isi) { %>
+            <div class="product-description"><%- block.isi %></div>
+          <% } else if (block.tipe === 'GAMBAR' && block.media_url) { %>
+            <% if (/\.pdf(?:[?#].*)?$/i.test(block.media_url)) { %>
+              <button type="button" class="product-media-open product-pdf-preview" data-media-type="pdf" data-media-src="<%= block.media_url %>#toolbar=0&navpanes=0&view=FitH" data-media-title="<%= item.judul %>">
+                <iframe src="<%= block.media_url %>#toolbar=0&navpanes=0&view=FitH" title="Pratinjau PDF <%= item.judul %>" loading="lazy"></iframe>
+                <span>Klik untuk membuka PDF</span>
+              </button>
+              <a class="product-media-download" href="<%= block.media_url %>" target="_blank" rel="noopener">Unduh PDF</a>
+            <% } else { %>
+              <button type="button" class="product-media-open" data-media-type="image" data-media-src="<%= block.media_url %>" data-media-title="<%= item.judul %>">
+                <img src="<%= block.media_url %>" alt="<%= item.judul %>" loading="lazy">
+                <span>Klik untuk memperbesar</span>
+              </button>
             <% } %>
-          <% }) %>
-        </article>
-      <% }) %>
-    </div>
-  </section>
+          <% } else if (block.tipe === 'VIDEO' && block.media_url) { %>
+            <video class="product-inline-video" src="<%= block.media_url %>" controls muted playsinline preload="metadata"></video>
+          <% } %>
+        <% }) %>
+      </article>
+    <% }) %>
+    <% if (!items.length) { %><p>Belum ada produk.</p><% } %>
+  </div>
+</section>
 
-
-<!-- LIGHTBOX PRODUCT -->
-<div class="product-lightbox" id="productLightbox">
-
-  <button
-    type="button"
-    class="product-lightbox-close"
-    id="productLightboxClose"
-    aria-label="Close"
-  >
-    &times;
-  </button>
-
-  <img
-    id="productLightboxImage"
-    src=""
-    alt=""
-  >
-
-  <video
-    id="productLightboxVideo"
-    controls
-    playsinline
-    preload="metadata"
-  ></video>
-
-  <div
-    class="product-lightbox-title"
-    id="productLightboxTitle"
-  ></div>
-
+<div class="product-viewer" id="productViewer" aria-hidden="true">
+  <button type="button" class="product-viewer-close" id="productViewerClose" aria-label="Tutup">&times;</button>
+  <div class="product-viewer-title" id="productViewerTitle"></div>
+  <div class="product-viewer-content" id="productViewerContent"></div>
+  <a class="product-viewer-link" id="productViewerLink" href="#" target="_blank" rel="noopener">Buka di tab baru / unduh</a>
 </div>
 
+<script>
+(() => {
+  const viewer = document.getElementById('productViewer');
+  const viewerContent = document.getElementById('productViewerContent');
+  const viewerTitle = document.getElementById('productViewerTitle');
+  const viewerLink = document.getElementById('productViewerLink');
+  const closeButton = document.getElementById('productViewerClose');
 
-  <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-  const lightbox = document.getElementById('productLightbox');
-
-  const lightboxImage =
-    document.getElementById('productLightboxImage');
-
-  const lightboxVideo =
-    document.getElementById('productLightboxVideo');
-
-  const lightboxTitle =
-    document.getElementById('productLightboxTitle');
-
-  const closeButton =
-    document.getElementById('productLightboxClose');
-
-
-  /*
-   * IMAGE
-   */
-  document.querySelectorAll('.product-image').forEach(function (media) {
-
-    media.addEventListener('click', function () {
-
-      const url = media.dataset.fullImage || media.src;
-      const title = media.dataset.title || '';
-
-      /*
-       * Kalau yang diklik adalah VIDEO
-       */
-      if (media.tagName === 'VIDEO') {
-
-        lightboxImage.style.display = 'none';
-
-        lightboxVideo.style.display = 'block';
-        lightboxVideo.src = media.currentSrc || media.src;
-
-        lightboxTitle.textContent = title;
-
-        lightbox.classList.add('open');
-
-        document.body.style.overflow = 'hidden';
-
-        lightboxVideo.play().catch(function () {
-          // Browser bisa menolak autoplay.
-          // User tetap bisa menekan tombol Play.
-        });
-
-        return;
-      }
-
-
-      /*
-       * Kalau yang diklik adalah GAMBAR
-       */
-      lightboxVideo.pause();
-      lightboxVideo.removeAttribute('src');
-      lightboxVideo.load();
-      lightboxVideo.style.display = 'none';
-
-      lightboxImage.src = url;
-      lightboxImage.alt = title;
-      lightboxImage.style.display = 'block';
-
-      lightboxTitle.textContent = title;
-
-      lightbox.classList.add('open');
-
-      document.body.style.overflow = 'hidden';
-
-    });
-
-  });
-
-
-  /*
-   * CLOSE LIGHTBOX
-   */
-  function closeLightbox() {
-
-    lightbox.classList.remove('open');
-
-    lightboxImage.src = '';
-
-    lightboxVideo.pause();
-    lightboxVideo.removeAttribute('src');
-    lightboxVideo.load();
-
-    document.body.style.overflow = '';
-
+  function closeViewer() {
+    viewer.classList.remove('is-open');
+    viewer.setAttribute('aria-hidden', 'true');
+    viewerContent.replaceChildren();
+    document.body.classList.remove('product-viewer-lock');
   }
 
-
-  closeButton.addEventListener('click', closeLightbox);
-
-
-  /*
-   * CLICK DI LUAR MEDIA
-   */
-  lightbox.addEventListener('click', function (event) {
-
-    if (event.target === lightbox) {
-      closeLightbox();
-    }
-
+  document.querySelectorAll('.product-media-open').forEach((button) => {
+    button.addEventListener('click', () => {
+      const type = button.dataset.mediaType;
+      const src = button.dataset.mediaSrc;
+      viewerTitle.textContent = button.dataset.mediaTitle || 'Product';
+      viewerLink.href = src;
+      const media = document.createElement(type === 'pdf' ? 'iframe' : 'img');
+      media.src = src;
+      if (type === 'pdf') media.title = viewerTitle.textContent;
+      else media.alt = viewerTitle.textContent;
+      viewerContent.replaceChildren(media);
+      viewer.classList.add('is-open');
+      viewer.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('product-viewer-lock');
+      closeButton.focus();
+    });
   });
 
-
-  /*
-   * ESCAPE
-   */
-  document.addEventListener('keydown', function (event) {
-
-    if (event.key === 'Escape') {
-      closeLightbox();
-    }
-
+  closeButton.addEventListener('click', closeViewer);
+  viewer.addEventListener('click', (event) => {
+    if (event.target === viewer) closeViewer();
   });
-
-});
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && viewer.classList.contains('is-open')) closeViewer();
+  });
+})();
 </script>
-
-
-  <%- include('../partials/footer', { footer }) %>
+<%- include('../partials/footer', { footer }) %>

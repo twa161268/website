@@ -50,13 +50,16 @@
 
         <% } else if (content.tipe === 'GAMBAR') { %>
 
-          <div class="article-content-image">
-            <img
-              src="<%= content.media_url %>"
-              alt="<%= article.judul %>"
-              loading="lazy"
-            >
-          </div>
+          <% if (/\.pdf(?:[?#].*)?$/i.test(content.media_url || '')) { %>
+            <div class="article-content-pdf">
+              <iframe src="<%= content.media_url %>#toolbar=1&navpanes=0" title="Dokumen PDF <%= article.judul %>" loading="lazy"></iframe>
+              <p><a href="<%= content.media_url %>" target="_blank" rel="noopener">Buka atau unduh PDF</a></p>
+            </div>
+          <% } else { %>
+            <div class="article-content-image">
+              <img src="<%= content.media_url %>" alt="<%= article.judul %>" loading="lazy">
+            </div>
+          <% } %>
 
         <!-- =========================
              VIDEO
